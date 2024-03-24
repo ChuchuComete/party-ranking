@@ -16,7 +16,7 @@ Les différents scripts sont par ailleurs
 - `process_PR_stats_ranking.py` : **à ne pas toucher**, crée les affinités
 
 # Méthode
-- Lancer le script results.py
+- Lancer le script `results.py`
 Le script va faire les affinités/stats et la sheet de résultats dans un nouveau dossier mais aussi la sheet de samples qui va nous intéresser 
 
 - Ouvrir la sheet "(PR) samples"
@@ -31,7 +31,7 @@ Sample length (seconds) : correspond à la durée du sample
 
 ![oui](https://cdn.discordapp.com/attachments/1209289359157891182/1209290697795182632/image.png?ex=660b4cb9&is=65f8d7b9&hm=93850edc926a8cd8161824887ac31dd7f6e82dff0ad53a5474c1daa55b689588&)
 
-- Lancer le script video.py
+- Lancer le script `video.py`
 
 À savoir: vous pouvez modifier song_per_part = ... dans votre script video.py. 
 Ça correspond au nombre de sons montés avant de diviser la vidéo. (C'est-à-dire que si le nombre de sons dans votre PR est plus grand que le nombre de song_per_part, votre vidéo va se faire en plusieurs fois et vous allez devoir relancer le script entre chaque "bout de vidéo")
