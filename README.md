@@ -9,6 +9,12 @@ Le dossier PR Avatar contient les avatars des personnes (à vous même de le fai
 
 Je vous laisse vous débrouiller pour modifier les données à chaque fois pour les différents scripts
 
+Les différents scripts sont par ailleurs 
+- `results.py` : crée le layout et la sheet des résultats avec les samples à remplir
+- `video.py` : crée la vidéo finale
+- `ScriptPR.py` : sert à la création de la vidéo (crée les layout intermédiaires avec les ranks)
+- `process_PR_stats_ranking.py` : **à ne pas toucher**, crée les affinités
+
 # Méthode
 - Lancer le script results.py
 Le script va faire les affinités/stats et la sheet de résultats dans un nouveau dossier mais aussi la sheet de samples qui va nous intéresser 
