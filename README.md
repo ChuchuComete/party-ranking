@@ -1,4 +1,6 @@
 # Party-Ranking
+Ici, tous les scripts Python que j'utilise pour monter des PRs 
+(Merci par ailleurs à Baguette, Sardine, Nono à qui j'ai pu emprunter différents scripts pour les modifier à ma sauce)
 
 # Méthode
 - Lancer le script results.py
