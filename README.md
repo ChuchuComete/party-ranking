@@ -4,7 +4,7 @@ Ici, tous les scripts Python que j'utilise pour monter des PRs
 (Merci par ailleurs à Baguette, Sardine, Nono à qui j'ai pu emprunter différents scripts pour les modifier à ma sauce)
 
 # Prérequis
-Un dossier comprenant le dossier 'Images', le dossier 'Vidéos' et le dossier 'PR Avatar' 
+Un dossier comprenant le dossier 'Images' (Images.zip contient tout ce qu'il y a dans le dossier Images), le dossier 'Vidéos' et le dossier 'PR Avatar' 
 Le dossier PR Avatar contient les avatars des personnes (à vous même de le faire)
 
 **Pour pouvoir télécharger des sons (utiliser ffmpeg)**: 
