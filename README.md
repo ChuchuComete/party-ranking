@@ -1,5 +1,7 @@
 # Party-Ranking
 
+
+# Méthode
 - Lancer le script results.py
 Le script va faire les affinités/stats et la sheet de résultats dans un nouveau dossier mais aussi la sheet de samples qui va nous intéresser 
 
