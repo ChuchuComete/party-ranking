@@ -2,6 +2,11 @@
 Ici, tous les scripts Python que j'utilise pour monter des PRs 
 (Merci par ailleurs à Baguette, Sardine, Nono à qui j'ai pu emprunter différents scripts pour les modifier à ma sauce)
 
+# Prérequis
+Un dossier comprenant le dossier 'Images', le dossier 'Vidéos' et le dossier 'PR Avatar' 
+Le dossier PR Avatar contient les avatars des personnes (à vous même de le faire)
+
+Je vous laisse vous débrouiller pour modifier les données à chaque fois pour les différents scripts
 # Méthode
 - Lancer le script results.py
 Le script va faire les affinités/stats et la sheet de résultats dans un nouveau dossier mais aussi la sheet de samples qui va nous intéresser 
