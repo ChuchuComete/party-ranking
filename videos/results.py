@@ -17,15 +17,15 @@ import os
 pr = ''  # laisser vide si un seul pr dans le dossier
 scoring_pr = False
 order = []  # laisser vide si ordre alphabétique
-image_path = 'C:/Users/adeli/Downloads/Party Rankings/pr avatar'
+image_path = '.../Party Rankings/pr avatar'
 
-results_path  = "C:/Users/adeli/Downloads/Party Rankings/Résultats"
-layout = Image.open("C:/Users/adeli/Downloads/Party Rankings/Images/Layout.png")
-layout54 = Image.open("C:/Users/adeli/Downloads/Party Rankings/Images/Layout54.png")
-police_pseudo = "C:/Users/adeli/Downloads/Party Rankings/Images/agencyfb.ttf"
-save = "C:/Users/adeli/Downloads/Party Rankings/Résultats/LayoutPR.png"
-carre = Image.open("C:/Users/adeli/Downloads/Party Rankings/Images/carre.png")
-police_pseudo2 = "C:/Users/adeli/Downloads/Party Rankings/Images/MusticaPro-SemiBold 600.otf"
+results_path  = ".../Party Rankings/Résultats"
+layout = Image.open(".../Party Rankings/Images/Layout.png")
+layout54 = Image.open(".../Party Rankings/Images/Layout54.png")
+police_pseudo = ".../Party Rankings/Images/agencyfb.ttf"
+save = ".../Party Rankings/Résultats/LayoutPR.png"
+carre = Image.open(".../Party Rankings/Images/carre.png")
+police_pseudo2 = ".../Party Rankings/Images/MusticaPro-SemiBold 600.otf"
 
 # Script
 
