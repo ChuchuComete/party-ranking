@@ -7,13 +7,19 @@ Ici, tous les scripts Python que j'utilise pour monter des PRs
 Un dossier comprenant le dossier 'Images', le dossier 'Vidéos' et le dossier 'PR Avatar' 
 Le dossier PR Avatar contient les avatars des personnes (à vous même de le faire)
 
-Je vous laisse vous débrouiller pour modifier les données à chaque fois pour les différents scripts
-
+**Pour pouvoir télécharger des sons (utiliser ffmpeg)**: 
+- Télécharger `ffmpeg-5.0.1-full_build.7z`
+- Aller dans "Modifier les variables d'environnement système"
+- Variables d'environnement > Path > Modifier > Nouveau puis coller C:\ffmpeg\bin 
+- Enregistrer
+- 
 Les différents scripts sont par ailleurs 
 - `results.py` : crée le layout et la sheet des résultats avec les samples à remplir
 - `video.py` : crée la vidéo finale
 - `ScriptPR.py` : sert à la création de la vidéo (crée les layout intermédiaires avec les ranks)
 - `process_PR_stats_ranking.py` : **à ne pas toucher**, crée les affinités
+- 
+Je vous laisse vous débrouiller pour modifier les données à chaque fois pour les différents scripts
 
 # Méthode
 - Lancer le script `results.py`
