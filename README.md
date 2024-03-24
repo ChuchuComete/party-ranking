@@ -8,11 +8,11 @@ Un dossier comprenant le dossier 'Images', le dossier 'Vidéos' et le dossier 'P
 Le dossier PR Avatar contient les avatars des personnes (à vous même de le faire)
 
 **Pour pouvoir télécharger des sons (utiliser ffmpeg)**: 
-- Télécharger `ffmpeg-5.0.1-full_build.7z`
+- Télécharger `ffmpeg-5.0.1-full_build.7z`(dispo sur https://www.ffmpeg.org/)
 - Aller dans "Modifier les variables d'environnement système"
 - Variables d'environnement > Path > Modifier > Nouveau puis coller C:\ffmpeg\bin 
 - Enregistrer
-- 
+
 Les différents scripts sont par ailleurs 
 - `results.py` : crée le layout et la sheet des résultats avec les samples à remplir
 - `video.py` : crée la vidéo finale
