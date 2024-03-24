@@ -5,14 +5,14 @@ import numpy as np
 
 #Données (Ce qu'il y a à modifier):
 
-Chemin = 'C:/Users/adeli/Downloads/Party Rankings/Images'
+Chemin = '.../Party Rankings/Images'
 os.chdir(Chemin)
 
 Bro=PIL.Image.open('Bronze2.png')
 Arg=PIL.Image.open('Argent2.png')
 Or=PIL.Image.open('Or2.png')
 
-LayoutPR = "C:/Users/adeli/Downloads/Party Rankings/Résultats/LayoutPR.png"
+LayoutPR = ".../Party Rankings/Résultats/LayoutPR.png"
 
 #Polices
 
@@ -21,8 +21,6 @@ Comfortaa = 'Comfortaa-Regular.ttf'
 njnaruto = 'njnaruto.ttf'
 
 #Fonctions Entrées Scores
-
-
 def entreescores8(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
     c=len(C)
     N=len(L)
