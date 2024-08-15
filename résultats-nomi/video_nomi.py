@@ -1,4 +1,4 @@
-from results import nb_columns, create_results_sheet, Song
+from results_nomi import nb_columns, create_results_sheet, Song
 from openpyxl import load_workbook
 from pathlib import Path
 from moviepy.editor import *
@@ -12,12 +12,12 @@ import json
 
 transition = 1
 pr = ''
-song_per_part = 45
+song_per_part = 40
 
 
 class SampledSong(Song):
-    def __init__(self, anime, song_type, info, link, score, sample, sample_length, ranks, order):
-        Song.__init__(self, anime, song_type, info, link)
+    def __init__(self, picker, anime, song_type, info, link, score, sample, sample_length, ranks, order):
+        Song.__init__(self, picker, anime, song_type, info, link)
         self.final_score = score
         self.sample = max(sample, transition)
         self.sample_length = sample_length
@@ -53,6 +53,7 @@ def get_results(sheet):
     scoring_pr = 'Average' in header
 
     rank_index = header.index('Rank')
+    picker_index = header.index('Picker')
     anime_index = header.index('Anime Name')
     type_index = header.index('Song Type')
     info_index = header.index('Song Info')
@@ -67,7 +68,7 @@ def get_results(sheet):
     for i in range(1, len(rows)):
         if not rows[i][rank_index]:
             raise Exception('Tiebreak needed')
-        songs[rows[i][rank_index]] = SampledSong(rows[i][anime_index], rows[i][type_index], rows[i][info_index],
+        songs[rows[i][rank_index]] = SampledSong(rows[i][picker_index]  , rows[i][anime_index], rows[i][type_index], rows[i][info_index],
                                                  rows[i][info_index + 1], rows[i][score_index], rows[i][sample_index],
                                                  rows[i][sample_length_index], rows[i][people_index:], order)
     return songs, order
@@ -192,31 +193,28 @@ def create_layouts(order, songs, output_path):
     C = nb_columns(order)
     pr_range = range(1, len(songs) + 1)
 
-    import ScriptPR as Nono
+    import ScriptPRNomi as Nono
     Rang = list(pr_range)
     Total = [songs[i].score for i in pr_range]
     R = [[songs[i].scores[name] for name in order] for i in pr_range]
     Titre = [songs[i].anime + ' ' + songs[i].type for i in pr_range]
     Musique = [songs[i].info for i in pr_range]
+    Picker = [songs[i].picker for i in pr_range]
 
-    if people ==1:
-        Nono.creationimagessolo(R, C, Rang, Total, Titre, Musique, output_path)
-    elif people <= 8:
-        Nono.creationimages8(R, C, Rang, Total, Titre, Musique, output_path)
+    if people <= 8:
+        Nono.creationimages8(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
 
     elif people <= 14:
-        Nono.creationimages14(R, C, Rang, Total, Titre, Musique, output_path)
+        Nono.creationimages14(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
 
     elif people <= 18:
-        Nono.creationimages18(R, C, Rang, Total, Titre, Musique, output_path)
+        Nono.creationimages18(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
 
     elif people <= 36:
-        Nono.creationimages36(R, C, Rang, Total, Titre, Musique, output_path)        
+        Nono.creationimages36(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)        
 
     elif people <= 54:
-        Nono.creationimages54(R, C, Rang, Total, Titre, Musique, output_path)
-
-
+        Nono.creationimages54(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
 
 
 def fuse_parts(parts):
@@ -289,10 +287,7 @@ if __name__ == '__main__':
         save_progress(progress)
 
     if progress['done'] == progress['parts'] and not progress['video']:
-        #song_list = [songs[i] for i in pr_range]
-        #create_results_sheet(pr, order, song_list, scoring_pr, True, final_sheet=True)
-        #get_affinity()
-
+        song_list = [songs[i] for i in pr_range]
         fuse_parts(progress['parts'])
         progress['video'] = True
 

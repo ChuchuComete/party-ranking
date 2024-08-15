@@ -5,14 +5,14 @@ import numpy as np
 
 #Données (Ce qu'il y a à modifier):
 
-Chemin = '.../Party Rankings/Images'
+Chemin = 'C:/Users/adeli/Downloads/Party Rankings/Images'
 os.chdir(Chemin)
 
 Bro=PIL.Image.open('Bronze2.png')
 Arg=PIL.Image.open('Argent2.png')
 Or=PIL.Image.open('Or2.png')
 
-LayoutPR = ".../Party Rankings/Résultats/LayoutPR.png"
+LayoutPR = "C:/Users/adeli/Downloads/Party Rankings/Résultats/LayoutPR.png"
 
 #Polices
 
@@ -21,6 +21,61 @@ Comfortaa = 'Comfortaa-Regular.ttf'
 njnaruto = 'njnaruto.ttf'
 
 #Fonctions Entrées Scores
+
+def entreescoressolo(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
+    c=len(C)
+    N=len(L)
+    img = PIL.Image.open(LayoutPR)
+    draw = ImageDraw.Draw(img)
+    font = ImageFont.truetype(Mustica, size=60) 
+    font2= ImageFont.truetype(Mustica, size=65)
+    font3= ImageFont.truetype(Comfortaa, size=45)
+    font4= ImageFont.truetype(Comfortaa, size=35)
+    font5= ImageFont.truetype(Comfortaa, size=23)
+    m=min(L)
+    M=max(L)
+    Inc=0
+    if Rang <10:
+        draw.text((395,170), str(Rang),fill = 'rgb(255, 255, 255)', font=font2)
+    else:
+        draw.text((378,170), str(Rang),fill = 'rgb(255, 255, 255)', font=font2)
+        
+    W1,H1=(1920,20)
+    H1b=30
+    H1c=40
+    
+    if len(Titre)<=33:
+        w1 = draw.textlength(Titre,font=font3)
+        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=font3)
+    elif len(Titre)<=69:
+        w1 = draw.textlength(Titre,font=font4)
+        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=font4)
+    else:
+        w1 = draw.textlength(Titre,font=font5)
+        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=font5)
+
+
+    W2,H2=(1920,1000)
+    H2b=1010
+    H2c=1020
+    if len(Musique)<=33:
+        w2 = draw.textlength(Musique,font=font3)
+        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=font3)
+    elif len(Musique)<=69:
+        w2 = draw.textlength(Musique,font=font4)
+        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=font4)
+    else:
+        w2  = draw.textlength(Musique,font=font5)
+        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=font5)
+
+
+    test="a" + str(k) + ".png"
+    os.chdir(output_path)
+    img.save(test)
+    os.chdir(Chemin)
+    return()
+
+
 def entreescores8(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
     c=len(C)
     N=len(L)
@@ -441,6 +496,20 @@ def entreescores54(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
 
 
 #Fonctions Création Images
+
+def creationimagessolo(R,C,Rang,Total,Titre,Musique,output_path):
+    E=240 
+    x1=130 
+    y1=170
+    z1=380
+    y2=1825
+    z2=2045
+    CL=[y1,y2]
+    DL=[z1,z2]
+    r=len(R)
+    for k in range(r):
+        entreescoressolo(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Titre[k],Musique[k], output_path)
+    return()
 
 def creationimages8(R,C,Rang,Total,Titre,Musique,output_path):
     E=240 

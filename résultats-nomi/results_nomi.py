@@ -17,26 +17,30 @@ import os
 pr = ''  # laisser vide si un seul pr dans le dossier
 scoring_pr = False
 order = []  # laisser vide si ordre alphabétique
-image_path = 'C:/Users/adeli/Downloads/Party Rankings/pr avatar'
+image_path = 'D:/PR stuff/Pr avatar'
 
-results_path  = "C:/Users/adeli/Downloads/Party Rankings/Résultats"
-layout = Image.open("C:/Users/adeli/Downloads/Party Rankings/Images/Layout.png")
-layoutsolo = Image.open("C:/Users/adeli/Downloads/Party Rankings/Images/LayoutSolo.png")
-layout54 = Image.open("C:/Users/adeli/Downloads/Party Rankings/Images/Layout54.png")
-police_pseudo = "C:/Users/adeli/Downloads/Party Rankings/Images/agencyfb.ttf"
-save = "C:/Users/adeli/Downloads/Party Rankings/Résultats/LayoutPR.png"
-carre = Image.open("C:/Users/adeli/Downloads/Party Rankings/Images/carre.png")
-police_pseudo2 = "C:/Users/adeli/Downloads/Party Rankings/Images/MusticaPro-SemiBold 600.otf"
+results_path  = "D:/PR stuff/Résultats"
+cadrenom = Image.open("D:/PR stuff/Images/CadreNom.png")
+cadrenom54 = Image.open("D:/PR stuff/Images/CadreNom54.png")
+layout = Image.open("D:/PR stuff/Images/Layout.png")
+layout54 = Image.open("D:/PR stuff/Images/Layout54.png")
+police_pseudo = "D:/PR stuff/Images/agencyfb.ttf"
+save = "D:/PR stuff/Images/LayoutPR.png"
+save_verify = "D:/PR stuff/Résultats/LayoutPR.png"
+carre = Image.open("D:/PR stuff/Images/carre.png")
+police_pseudo2 = "D:/PR stuff/Images/MusticaPro-SemiBold 600.otf"
 
 # Script
 
 draw = ImageDraw.Draw(layout)
 draw54 = ImageDraw.Draw(layout54)
+
 avatars = []
 fonta = ImageFont.truetype(police_pseudo, size=32)
 
 class Song:
-    def __init__(self, anime, song_type, info, link):
+    def __init__(self, picker, anime, song_type, info, link):
+        self.picker = picker
         self.anime = anime
         self.type = song_type
         self.info = info
@@ -78,20 +82,20 @@ def get_data_script(sheet, songs):
     titres = [titre.value for titre in titres]
 
     id_index = titres.index('ID')
+    picker_index = titres.index('Picker')
     anime_index = titres.index('Anime Name')
     song_type_index = titres.index('Song Type')
     song_info_index = titres.index('Song Info')
     rank_index = titres.index('Rank') if not scoring_pr else titres.index('Score')
 
     for row in sheet.iter_rows(min_row=2, min_col=id_index, max_col=rank_index, max_row=num_songs + 1):
-        print(row[anime_index].value)
         if not row[anime_index].value:
             break
         if row[song_info_index].hyperlink:
-            song = Song(row[anime_index].value, row[song_type_index].value, row[song_info_index].value,
+            song = Song(row[picker_index].value ,row[anime_index].value, row[song_type_index].value, row[song_info_index].value,
                         row[song_info_index].hyperlink.target)
         else:
-            song = Song(row[anime_index].value, row[song_type_index].value, row[song_info_index].value,
+            song = Song(row[picker_index].value ,row[anime_index].value, row[song_type_index].value, row[song_info_index].value,
                         row[song_info_index].value)
         songs[row[id_index].value] = song
 
@@ -103,6 +107,11 @@ def get_ranker_ranks(ws, num_songs, pseudo):
     found = False
     ids = []
     ranks = []
+    all_columns = {col[0].value for col in ws.columns}
+    if not 'ID' in all_columns:
+        raise Exception("Did not find ID column")
+    if not 'Rank' in all_columns:
+        raise Exception("Did not find Rank column")
 
     for col in ws.columns:
         if col[0].value is None:
@@ -124,8 +133,7 @@ def get_ranker_ranks(ws, num_songs, pseudo):
     ids = ids[:num_songs]
     ranks = ranks[:num_songs]
 
-    if not found:
-        raise Exception("Did not find Rank column")
+
     if len(ranks) != num_songs:
         raise Exception(f"Did not score/rank all songs ({len(ranks)}/{num_songs})")
     if len(list(set(ranks))) != len(ranks) and not scoring_pr:
@@ -176,7 +184,7 @@ def make_order(order, pr):
 
 
 def fill_values(sheet, order, song_list, final_sheet, scoring_pr):
-    row1 = ['Rank', 'Anime Name', 'Song Type', 'Song Info', 'Score']
+    row1 = ['Rank', 'Picker', 'Anime Name', 'Song Type', 'Song Info', 'Score',]
     if scoring_pr:
         row1.append('Average')
     if not final_sheet:
@@ -196,21 +204,21 @@ def fill_values(sheet, order, song_list, final_sheet, scoring_pr):
     for i in range(len(song_list)):
         if not song_list[i].is_tied or final_sheet:
             sheet.cell(i + 2, 1, i + 1)
-        sheet.cell(i + 2, 2, song_list[i].anime)
-        sheet.cell(i + 2, 3, song_list[i].type)
+        sheet.cell(i + 2, 2, song_list[i].picker)
+        sheet.cell(i + 2, 3, song_list[i].anime)
+        sheet.cell(i + 2, 4, song_list[i].type)
 
-        link_cell = sheet.cell(i + 2, 4, song_list[i].info)
+        link_cell = sheet.cell(i + 2, 5, song_list[i].info)
         link_cell.hyperlink = song_list[i].link
         link_cell.font = Font(color=link_color, underline='single')
 
-        sheet.cell(i + 2, 5, song_list[i].score)
+        sheet.cell(i + 2, 6, song_list[i].score)
         if scoring_pr:
-            sheet.cell(i + 2, 6, float('{:.2f}'.format(song_list[i].score / len(order))))
+            sheet.cell(i + 2, 7, float('{:.2f}'.format(song_list[i].score / len(order))))
 
         for j in range(len(order)):
             sheet.cell(i + 2, j + part1 + 1, song_list[i].scores[order[j]])
-
-
+            
 def resize_columns(sheet, final_sheet=False):
     dims = {}
     for row in sheet.rows:
@@ -259,19 +267,20 @@ def create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, outputpat
 
     fill_values(sheet, order, song_list, final_sheet, scoring_pr)
     resize_columns(sheet, final_sheet)
+
     if final_sheet:
         color_sheet(sheet, song_list, order, scoring_pr)
     sheet.auto_filter.ref = sheet.dimensions
     result_sheet_name = f'{pr} results.xlsx' if final_sheet else f'{pr} samples.xlsx'
     result.save(result_sheet_name)
 
+    
 def worryheart(people):
     global LINE1
     manquants = []
     save_image = True
-    if people == 1:
-        print(people)
-    elif people <= 8:
+    if people <= 8:
+        layout.paste(cadrenom, mask = cadrenom)
         fontb = ImageFont.truetype(police_pseudo2, size=35) 
         i=0
         for j in range(len(C)):
@@ -300,6 +309,7 @@ def worryheart(people):
             incr += 91+152
 
     elif people <= 14:
+        layout.paste(cadrenom, mask = cadrenom)
         font = ImageFont.truetype(police_pseudo, size=36) 
         i=0
         for j in range(len(C)):
@@ -328,6 +338,7 @@ def worryheart(people):
             incr += 145
  
     elif 15 <= people <= 18:
+        layout.paste(cadrenom, mask = cadrenom)
         i=0
         for j in range(len(C)):
             provisoire=[]
@@ -355,6 +366,7 @@ def worryheart(people):
             incr += 23+97
  
     elif 19 <= people <= 36:
+        layout.paste(cadrenom, mask = cadrenom)
         i=0
         for j in range(len(C)):
             provisoire=[]
@@ -402,12 +414,13 @@ def worryheart(people):
         incrcar = 70
         for i in range(C[3]):
             layout.paste(avatars[3][i], (1803,incr))
-            layout.paste(carre, (1785,incrcar),mask=carre)
+            layout.paste(carre, (1785,incrcar),mask=carre)  
             draw.text((1852,incr+3),order[i+C[0]+C[1]+C[2]],fill='white', stroke_fill='black', stroke_width=1, font=fonta,anchor="ms")
             incr += 23+97
             incrcar += 120
- 
+            
     elif 37 <= people <= 54:
+        layout54.paste(cadrenom54, mask = cadrenom54)
         i=0
         for j in range(len(C)):
             provisoire=[]
@@ -479,12 +492,13 @@ def worryheart(people):
             incr += 23+97
             incrcar += 120
 
-    if save_image and people == 1:
-        layoutsolo.save(save)
-    elif save_image and people <= 36:
+        
+    if save_image and people <= 36:
         layout.save(save)
+        layout.save(save_verify)
     elif save_image and 36 <= people <=54:
         layout54.save(save)
+        layout54.save(save_verify)
 
     else:
         with open('pdp manquantes.txt', 'w') as file:
@@ -582,7 +596,6 @@ def get_affinity(outputpath):
     affinity.main()
     os.remove(f'{pr}.ods')
 
-
 white = 'FFFFFF'
 light_gray = 'F3F3F3'
 link_color = "1155cc"
@@ -597,6 +610,8 @@ green = '00FF00'
 green_background = PatternFill(patternType='solid', bgColor=Color(rgb=green))
 red = 'FF0000'
 red_background = PatternFill(patternType='solid', bgColor=Color(rgb=red))
+
+
 
 if __name__ == '__main__':
     path_list = pr_paths(Path('.').glob('**/*.xlsx'), pr)
@@ -634,12 +649,12 @@ if __name__ == '__main__':
     song_list = list(songs.values())
     song_list.sort()
 
-    create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, results_path )
-
+    create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, results_path)
     print(len(order))
     print(order)
     worryheart(len(order))
 
+    
     try:
         base_path = os.getcwd()
         Path(f'{pr} Stats et Sheet').mkdir(parents=True, exist_ok=True)
@@ -652,4 +667,4 @@ if __name__ == '__main__':
         print(e)
         pass
 
-    
+
