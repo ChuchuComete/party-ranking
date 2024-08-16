@@ -2,15 +2,23 @@ import PIL
 from PIL import Image, ImageDraw, ImageFont,ImageEnhance, ImageFilter,ImageOps
 import os
 import numpy as np
+import configparser
 
-Chemin = 'C:/Users/adeli/Downloads/Party Rankings/Images'
+
+config = configparser.ConfigParser()
+config.read('../config.txt')
+pr_path = config["general"]["pr_path"]
+
+#Données (Ce qu'il y a à modifier):
+
+Chemin = f'{pr_path}/Images'
 os.chdir(Chemin)
 
 Bro=PIL.Image.open('Bronze2.png')
 Arg=PIL.Image.open('Argent2.png')
 Or=PIL.Image.open('Or2.png')
 
-LayoutPR = "C:/Users/adeli/Downloads/Party Rankings/Résultats Nomi/LayoutPR.png"
+LayoutPR =  f"{pr_path}/résultats-nomi/LayoutPR.png"
 
 #Polices
 
