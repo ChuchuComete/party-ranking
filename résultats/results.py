@@ -267,6 +267,7 @@ def create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, outputpat
         color_sheet(sheet, song_list, order, scoring_pr)
     sheet.auto_filter.ref = sheet.dimensions
     result_sheet_name = f'{pr} results.xlsx' if final_sheet else f'{pr} samples.xlsx'
+    print(f"✅ {pr} results.xlsx généré !") if final_sheet else print(f"✅ {pr} samples.xlsx généré !")
     result.save(result_sheet_name)
 
 def worryheart(people):
@@ -492,10 +493,13 @@ def worryheart(people):
 
     if save_image and people == 1:
         layoutsolo.save(save)
+        print("✅ Layout PR généré !")
     elif save_image and people <= 36:
         layout.save(save)
+        print("✅ Layout PR généré !")
     elif save_image and 36 <= people <=54:
         layout54.save(save)
+        print("✅ Layout PR généré !")
 
     else:
         print(f"⚠️ PP manquantes : {manquants}")
