@@ -23,7 +23,7 @@ order = []  # laisser vide si ordre alphabétique
 config = configparser.ConfigParser()
 config.read('../config.txt')
 pr_path = config["general"]["pr_path"]
-image_path = f'{pr_path}/pr avatar'
+image_path = f'{pr_path}/pr-avatar'
 results_path  = f"{pr_path}/Résultats"
 layout = Image.open(f"{pr_path}/Images/Layout.png")
 layoutsolo = Image.open(f"{pr_path}/Images/LayoutSolo.png")
@@ -89,7 +89,6 @@ def get_data_script(sheet, songs):
     rank_index = titres.index('Rank') if not scoring_pr else titres.index('Score')
 
     for row in sheet.iter_rows(min_row=2, min_col=id_index, max_col=rank_index, max_row=num_songs + 1):
-        print(row[anime_index].value)
         if not row[anime_index].value:
             break
         if row[song_info_index].hyperlink:
@@ -273,6 +272,7 @@ def create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, outputpat
 def worryheart(people):
     global LINE1
     manquants = []
+    # Indique si on a toutes les PP ou non
     save_image = True
     if people == 1:
         print(people)
@@ -287,7 +287,9 @@ def worryheart(people):
                     pp = pp.resize((152, 152))
                     provisoire.append(pp)
                 except FileNotFoundError:
-                    manquants.append(f'order[i]')
+                    manquants.append(f'{order[i]}')
+                    # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                    provisoire.append(Image.open(f'{image_path}/x.png'))
                     save_image = False
                 i+=1
             avatars.append(provisoire)
@@ -315,7 +317,9 @@ def worryheart(people):
                     pp = pp.resize((118, 118))
                     provisoire.append(pp)
                 except FileNotFoundError:
-                    manquants.append(f'order[i]')
+                    manquants.append(f'{order[i]}')
+                    # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                    provisoire.append(Image.open(f'{image_path}/x.png'))
                     save_image = False
                 i+=1
             avatars.append(provisoire)
@@ -342,7 +346,9 @@ def worryheart(people):
                     pp = pp.resize((97, 97))
                     provisoire.append(pp)
                 except FileNotFoundError:
-                    manquants.append(f'order[i]')
+                    manquants.append(f'{order[i]}')
+                    # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                    provisoire.append(Image.open(f'{image_path}/x.png'))
                     save_image = False
                 i+=1
             avatars.append(provisoire)
@@ -365,13 +371,13 @@ def worryheart(people):
             provisoire=[]
             while len(provisoire)!= C[j]:
                 try:
-                    print(f'{image_path}/{order[i]}.png')
                     pp = Image.open(f'{image_path}/{order[i]}.png')
                     pp = pp.resize((97, 97))
                     provisoire.append(pp)
-                    print(len(provisoire))
                 except FileNotFoundError:
-                    manquants.append(f'order[i]')
+                    manquants.append(f'{order[i]}')
+                    # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                    provisoire.append(Image.open(f'{image_path}/x.png'))
                     save_image = False
                 i+=1
             avatars.append(provisoire)
@@ -418,13 +424,13 @@ def worryheart(people):
             provisoire=[]
             while len(provisoire)!= C[j]:
                 try:
-                    print(f'{image_path}/{order[i]}.png')
                     pp = Image.open(f'{image_path}/{order[i]}.png')
                     pp = pp.resize((97, 97))
                     provisoire.append(pp)
-                    print(len(provisoire))
                 except FileNotFoundError:
-                    manquants.append(f'order[i]')
+                    manquants.append(f'{order[i]}')
+                    # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                    provisoire.append(Image.open(f'{image_path}/x.png'))
                     save_image = False
                 i+=1
             avatars.append(provisoire)
@@ -492,8 +498,8 @@ def worryheart(people):
         layout54.save(save)
 
     else:
-        with open('pdp manquantes.txt', 'w') as file:
-            file.write(manquants)
+        print(f"⚠️ PP manquantes : {manquants}")
+        print(f"❌ Layout non généré car PP manquante(s), merci de les fournir et de relancer le script")
             
 def nb_columns(order):
     C = []
@@ -641,8 +647,6 @@ if __name__ == '__main__':
 
     create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, results_path )
 
-    print(len(order))
-    print(order)
     worryheart(len(order))
 
     try:
@@ -654,7 +658,7 @@ if __name__ == '__main__':
         get_affinity(temp_path)
         print("Affinité Faite")
     except Exception as e:
-        print(e)
         pass
+
 
     
