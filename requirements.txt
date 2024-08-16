@@ -6,3 +6,4 @@ pytube
 ffmpeg_normalize
 opencv-python
 discord
+requests
