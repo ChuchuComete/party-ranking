@@ -284,14 +284,26 @@ def worryheart(people):
             provisoire=[]
             while len(provisoire)!= C[j]:
                 try:
-                    pp = Image.open(f'{image_path}/{order[i]}.png')
+                    # On regarde d'abord s'il y a une PP spéciale pour le PR
+                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
                     pp = pp.resize((152, 152))
                     provisoire.append(pp)
                 except FileNotFoundError:
-                    manquants.append(f'{order[i]}')
-                    # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                    provisoire.append(Image.open(f'{image_path}/x.png'))
-                    save_image = False
+                    try:
+                        # Sinon, on tente de prendre la PP normale
+                        pp = Image.open(f'{image_path}/{order[i]}.png')
+                        pp = pp.resize((152, 152))
+                        provisoire.append(pp)
+                        manquants.append(f'{order[i]}')
+                    except FileNotFoundError:
+                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                        provisoire.append(Image.open(f'{image_path}/x.png'))
+                        save_image = False
+                        except FileNotFoundError:
+                        manquants.append(f'{order[i]}')
+                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                        provisoire.append(Image.open(f'{image_path}/x.png'))
+                        save_image = False
                 i+=1
             avatars.append(provisoire)
 
@@ -314,14 +326,26 @@ def worryheart(people):
             provisoire=[]
             while len(provisoire)!= C[j]:
                 try:
-                    pp = Image.open(f'{image_path}/{order[i]}.png')
-                    pp = pp.resize((118, 118))
+                    # On regarde d'abord s'il y a une PP spéciale pour le PR
+                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
+                    pp = pp.resize((152, 152))
                     provisoire.append(pp)
                 except FileNotFoundError:
-                    manquants.append(f'{order[i]}')
-                    # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                    provisoire.append(Image.open(f'{image_path}/x.png'))
-                    save_image = False
+                    try:
+                        # Sinon, on tente de prendre la PP normale
+                        pp = Image.open(f'{image_path}/{order[i]}.png')
+                        pp = pp.resize((152, 152))
+                        provisoire.append(pp)
+                        manquants.append(f'{order[i]}')
+                    except FileNotFoundError:
+                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                        provisoire.append(Image.open(f'{image_path}/x.png'))
+                        save_image = False
+                        except FileNotFoundError:
+                        manquants.append(f'{order[i]}')
+                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                        provisoire.append(Image.open(f'{image_path}/x.png'))
+                        save_image = False
                 i+=1
             avatars.append(provisoire)
 
@@ -343,14 +367,26 @@ def worryheart(people):
             provisoire=[]
             while len(provisoire)!= C[j]:
                 try:
-                    pp = Image.open(f'{image_path}/{order[i]}.png')
-                    pp = pp.resize((97, 97))
+                    # On regarde d'abord s'il y a une PP spéciale pour le PR
+                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
+                    pp = pp.resize((152, 152))
                     provisoire.append(pp)
                 except FileNotFoundError:
-                    manquants.append(f'{order[i]}')
-                    # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                    provisoire.append(Image.open(f'{image_path}/x.png'))
-                    save_image = False
+                    try:
+                        # Sinon, on tente de prendre la PP normale
+                        pp = Image.open(f'{image_path}/{order[i]}.png')
+                        pp = pp.resize((152, 152))
+                        provisoire.append(pp)
+                        manquants.append(f'{order[i]}')
+                    except FileNotFoundError:
+                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                        provisoire.append(Image.open(f'{image_path}/x.png'))
+                        save_image = False
+                        except FileNotFoundError:
+                        manquants.append(f'{order[i]}')
+                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                        provisoire.append(Image.open(f'{image_path}/x.png'))
+                        save_image = False
                 i+=1
             avatars.append(provisoire)
 
@@ -372,14 +408,26 @@ def worryheart(people):
             provisoire=[]
             while len(provisoire)!= C[j]:
                 try:
-                    pp = Image.open(f'{image_path}/{order[i]}.png')
-                    pp = pp.resize((97, 97))
+                    # On regarde d'abord s'il y a une PP spéciale pour le PR
+                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
+                    pp = pp.resize((152, 152))
                     provisoire.append(pp)
                 except FileNotFoundError:
-                    manquants.append(f'{order[i]}')
-                    # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                    provisoire.append(Image.open(f'{image_path}/x.png'))
-                    save_image = False
+                    try:
+                        # Sinon, on tente de prendre la PP normale
+                        pp = Image.open(f'{image_path}/{order[i]}.png')
+                        pp = pp.resize((152, 152))
+                        provisoire.append(pp)
+                        manquants.append(f'{order[i]}')
+                    except FileNotFoundError:
+                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                        provisoire.append(Image.open(f'{image_path}/x.png'))
+                        save_image = False
+                        except FileNotFoundError:
+                        manquants.append(f'{order[i]}')
+                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                        provisoire.append(Image.open(f'{image_path}/x.png'))
+                        save_image = False
                 i+=1
             avatars.append(provisoire)
 
@@ -425,14 +473,26 @@ def worryheart(people):
             provisoire=[]
             while len(provisoire)!= C[j]:
                 try:
-                    pp = Image.open(f'{image_path}/{order[i]}.png')
-                    pp = pp.resize((97, 97))
+                    # On regarde d'abord s'il y a une PP spéciale pour le PR
+                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
+                    pp = pp.resize((152, 152))
                     provisoire.append(pp)
                 except FileNotFoundError:
-                    manquants.append(f'{order[i]}')
-                    # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                    provisoire.append(Image.open(f'{image_path}/x.png'))
-                    save_image = False
+                    try:
+                        # Sinon, on tente de prendre la PP normale
+                        pp = Image.open(f'{image_path}/{order[i]}.png')
+                        pp = pp.resize((152, 152))
+                        provisoire.append(pp)
+                        manquants.append(f'{order[i]}')
+                    except FileNotFoundError:
+                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                        provisoire.append(Image.open(f'{image_path}/x.png'))
+                        save_image = False
+                        except FileNotFoundError:
+                        manquants.append(f'{order[i]}')
+                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                        provisoire.append(Image.open(f'{image_path}/x.png'))
+                        save_image = False
                 i+=1
             avatars.append(provisoire)
 
