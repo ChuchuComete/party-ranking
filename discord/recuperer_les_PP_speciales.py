@@ -31,7 +31,7 @@ async def save_image(attachment, author):
     if response.status_code == 200:
         with open(f"{results_path}/{pr_name}/pr-avatars/{author}.png", 'wb') as file:
             file.write(response.content)
-        print(f"Saved {author}.png")
+        print(f"✅ Saved {author}.png")
     else:
         print(f"Failed to download {author}.png")
 
@@ -55,6 +55,7 @@ async def on_ready():
             print("Thread not found or invalid thread ID.")
             exit()
         
+        print(f"Gathering all PPs for PR {pr_name}...")
         messages = []
         async for message in thread.history(limit=None):
             messages.append(message)

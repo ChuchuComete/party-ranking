@@ -1,7 +1,0 @@
-[general]
-pr_path = C:\Users\...
-
-
-
-[discord]
-cometebot_key = 
