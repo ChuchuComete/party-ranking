@@ -1,3 +1,7 @@
 scipy
 numpy
 openpyxl
+moviepy
+pytube
+ffmpeg_normalize
+opencv-python

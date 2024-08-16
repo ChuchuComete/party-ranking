@@ -13,6 +13,9 @@ import json
 transition = 1
 pr = ''
 song_per_part = 45
+# Set this to True to get max resolution on Youtube videos (slower)
+max_resolution = False
+
 
 
 class SampledSong(Song):
@@ -82,8 +85,33 @@ def get_extension(link):
 
 
 def youtube_dl(link, output_name):
-    YouTube(link).streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()\
-        .download(filename=output_name)
+    if (max_resolution):
+        yt = YouTube(link)
+
+        # Download highest resolution video
+        video_stream = yt.streams.filter(file_extension='mp4', only_video=True).order_by('resolution').desc().first()
+        video_path = video_stream.download(filename=f"{output_name}_video.mp4")
+        
+        # Download highest quality audio
+        audio_stream = yt.streams.filter(file_extension='mp4', only_audio=True).order_by('abr').desc().first()
+        audio_path = audio_stream.download(filename=f"{output_name}_audio.mp4")
+        
+        # Merge video and audio
+        video_clip = VideoFileClip(video_path)
+        audio_clip = AudioFileClip(audio_path)
+        
+        final_clip = video_clip.set_audio(audio_clip)
+        final_clip.write_videofile(filename=f"{output_name}", codec='libx264', audio_codec='aac')
+        
+        # Clean up temporary files
+        video_clip.close()
+        audio_clip.close()
+        final_clip.close()
+        os.remove(video_path)
+        os.remove(audio_path)
+    else:
+        YouTube(link).streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first().download(filename=output_name)
+
 
 
 def download_songs(songs, song_range):
