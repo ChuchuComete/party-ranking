@@ -75,5 +75,5 @@ async def on_ready():
 
     print("Ready!")
 
-bot.run('cometebot_key')
+bot.run(cometebot_key)
 
