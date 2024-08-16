@@ -11,22 +11,27 @@ import process_PR_stats_ranking as affinity
 from pyexcel_ods3 import save_data
 from pyexcel_xlsx import get_data
 import os
+import configparser
 
 # Données
 
 pr = ''  # laisser vide si un seul pr dans le dossier
 scoring_pr = False
 order = []  # laisser vide si ordre alphabétique
-image_path = 'C:/Users/adeli/Downloads/Party Rankings/pr avatar'
 
-results_path  = "C:/Users/adeli/Downloads/Party Rankings/Résultats"
-layout = Image.open("C:/Users/adeli/Downloads/Party Rankings/Images/Layout.png")
-layoutsolo = Image.open("C:/Users/adeli/Downloads/Party Rankings/Images/LayoutSolo.png")
-layout54 = Image.open("C:/Users/adeli/Downloads/Party Rankings/Images/Layout54.png")
-police_pseudo = "C:/Users/adeli/Downloads/Party Rankings/Images/agencyfb.ttf"
-save = "C:/Users/adeli/Downloads/Party Rankings/Résultats/LayoutPR.png"
-carre = Image.open("C:/Users/adeli/Downloads/Party Rankings/Images/carre.png")
-police_pseudo2 = "C:/Users/adeli/Downloads/Party Rankings/Images/MusticaPro-SemiBold 600.otf"
+
+config = configparser.ConfigParser()
+config.read('../config.txt')
+pr_path = config["general"]["pr_path"]
+image_path = f'{pr_path}/pr avatar'
+results_path  = f"{pr_path}/Résultats"
+layout = Image.open(f"{pr_path}/Images/Layout.png")
+layoutsolo = Image.open(f"{pr_path}/Images/LayoutSolo.png")
+layout54 = Image.open(f"{pr_path}/Images/Layout54.png")
+police_pseudo = f"{pr_path}/Images/agencyfb.ttf"
+save = f"{pr_path}/Résultats/LayoutPR.png"
+carre = Image.open(f"{pr_path}/Images/carre.png")
+police_pseudo2 = f"{pr_path}/Images/MusticaPro-SemiBold 600.otf"
 
 # Script
 
