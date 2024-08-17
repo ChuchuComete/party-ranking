@@ -649,6 +649,13 @@ def entreescores54(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     os.chdir(Chemin)
     return()
 
+def verif_picker(dico):
+    liste = []
+    for elem in dico:
+        if dico[elem] == False:
+            liste.append(elem)
+    return liste
+
 def creationimages8(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
     E=240 
     x1=130 
@@ -663,7 +670,7 @@ def creationimages8(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
 
     Picker_Liste = Picker.copy()
     Picker.sort()
-
+    
     dico = {}
     for i in range(len(order)):
         dico[order[i]] = i+1
@@ -677,6 +684,7 @@ def creationimages8(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
         Nomi.append(dico[Picker_Liste[i]])
 
     print(Nomi)
+    print(verif_picker(dico))
 
     for k in range(r):
         entreescores8(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
@@ -705,13 +713,14 @@ def creationimages14(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
     for i in range(len(Picker)):
         if Picker[i] not in order:
             dico[Picker[i]] = False
-            
+
         
     Nomi = []
     for i in range(len(Picker_Liste)):
         Nomi.append(dico[Picker_Liste[i]])
 
     print(Nomi)
+    print(verif_picker(dico))
 
     for k in range(r):
         entreescores14(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
@@ -738,13 +747,14 @@ def creationimages18(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
     for i in range(len(Picker)):
         if Picker[i] not in order:
             dico[Picker[i]] = False
-            
+
         
     Nomi = []
     for i in range(len(Picker_Liste)):
         Nomi.append(dico[Picker_Liste[i]])
 
     print(Nomi)
+    print(verif_picker(dico))
 
     for k in range(r):
         entreescores18(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
@@ -783,6 +793,7 @@ def creationimages36(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
         Nomi.append(dico[Picker_Liste[i]])
 
     print(Nomi)
+    print(verif_picker(dico))
 
     for k in range(r):
         entreescores36(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
@@ -824,6 +835,7 @@ def creationimages54(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
         Nomi.append(dico[Picker_Liste[i]])
 
     print(Nomi)
+    print(verif_picker(dico))
 
     for k in range(r):
         entreescores54(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
