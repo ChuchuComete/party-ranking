@@ -86,7 +86,10 @@ def get_data_script(sheet, songs):
     anime_index = titres.index('Anime Name')
     song_type_index = titres.index('Song Type')
     song_info_index = titres.index('Song Info')
-    rank_index = titres.index('Rank') if not scoring_pr else titres.index('Score')
+    try :
+        rank_index = titres.index('Rank') if not scoring_pr else titres.index('Score')
+    except :
+        exit("❌ Column Rank not found in the first sheet" if not scoring_pr else "❌ Column Score not found in the first sheet")
 
     for row in sheet.iter_rows(min_row=2, min_col=id_index, max_col=rank_index, max_row=num_songs + 1):
         if not row[anime_index].value:
@@ -123,6 +126,8 @@ def get_ranker_ranks(ws, num_songs, pseudo):
                 try:
                     ranks.append(int(row.value)) if not scoring_pr else ranks.append(row.value)
                 except:
+                    if row.value.startswith("="):
+                        print(f"⚠️ Animal {pseudo} put a formula in ranking cells")
                     pass
 
     ids = ids[:num_songs]
@@ -256,7 +261,7 @@ def create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, outputpat
     os.chdir(outputpath)
     if not make_sheet:
         pyperclip.copy(to_clipboard + '```')
-        raise Exception('Stallers, copied to clipboard')
+        exit('❌ Stallers, could not finish processing')
 
     result = Workbook()
     sheet = result.active
@@ -681,7 +686,7 @@ if __name__ == '__main__':
             for song_id, rank, name in rank_list:
                 songs[song_id].scores[name] = rank
         except Exception as e:
-            message = f'Exception at ranker {pseudo} : {e}'
+            message = f'⚠️ {pseudo} : {e}'
             print(message)
             to_clipboard += message + '\n'
             make_sheet = False
