@@ -22,8 +22,14 @@ class SampledSong(Song):
     def __init__(self, anime, song_type, info, link, score, sample, sample_length, ranks, order):
         Song.__init__(self, anime, song_type, info, link)
         self.final_score = score
+        if sample is None:
+            exit("❌ Une ou plusieurs des cases Sample est vide!")
         self.sample = max(sample, transition)
         self.sample_length = sample_length
+        if sample_length is None:
+            exit("❌ Une ou plusieurs des cases Sample Length est vide!")
+        if sample_length <= 0:
+            exit("❌ Une ou plusieurs des cases Sample Length contient une valeur invalide ! (<= 0)")
         self.scores = {order[i]: ranks[i] for i in range(len(order))}
         if 'catbox' in link:
             self.extension = get_extension(link)
