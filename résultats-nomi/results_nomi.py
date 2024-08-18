@@ -24,14 +24,14 @@ pr_path = config["general"]["pr_path"]
 
 
 image_path = f"{pr_path}/pr-avatar"
-results_path  = f"{pr_path}/résultats"
+results_path  = f"{pr_path}/résultats-nomi"
 cadrenom = Image.open(f"{pr_path}/images/CadreNom.png")
 cadrenom54 = Image.open(f"{pr_path}/images/CadreNom54.png")
 layout = Image.open(f"{pr_path}/images/Layout.png")
 layout54 = Image.open(f"{pr_path}/images/Layout54.png")
 police_pseudo = f"{pr_path}/images/agencyfb.ttf"
 save = f"{pr_path}/images/LayoutPR.png"
-save_verify = f"{pr_path}/résultats/LayoutPR.png"
+save_verify = f"{pr_path}/résultats-nomi/LayoutPR.png"
 carre = Image.open(f"{pr_path}/images/carre.png")
 police_pseudo2 = f"{pr_path}/images/MusticaPro-SemiBold 600.otf"
 
