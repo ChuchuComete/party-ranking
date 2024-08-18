@@ -296,10 +296,6 @@ def worryheart(people):
                         provisoire.append(pp)
                         manquants.append(f'{order[i]}')
                     except FileNotFoundError:
-                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                        provisoire.append(Image.open(f'{image_path}/x.png'))
-                        save_image = False
-                        except FileNotFoundError:
                         manquants.append(f'{order[i]}')
                         # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
                         provisoire.append(Image.open(f'{image_path}/x.png'))
@@ -338,10 +334,6 @@ def worryheart(people):
                         provisoire.append(pp)
                         manquants.append(f'{order[i]}')
                     except FileNotFoundError:
-                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                        provisoire.append(Image.open(f'{image_path}/x.png'))
-                        save_image = False
-                        except FileNotFoundError:
                         manquants.append(f'{order[i]}')
                         # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
                         provisoire.append(Image.open(f'{image_path}/x.png'))
@@ -379,10 +371,6 @@ def worryheart(people):
                         provisoire.append(pp)
                         manquants.append(f'{order[i]}')
                     except FileNotFoundError:
-                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                        provisoire.append(Image.open(f'{image_path}/x.png'))
-                        save_image = False
-                        except FileNotFoundError:
                         manquants.append(f'{order[i]}')
                         # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
                         provisoire.append(Image.open(f'{image_path}/x.png'))
@@ -420,10 +408,6 @@ def worryheart(people):
                         provisoire.append(pp)
                         manquants.append(f'{order[i]}')
                     except FileNotFoundError:
-                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                        provisoire.append(Image.open(f'{image_path}/x.png'))
-                        save_image = False
-                        except FileNotFoundError:
                         manquants.append(f'{order[i]}')
                         # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
                         provisoire.append(Image.open(f'{image_path}/x.png'))
@@ -485,10 +469,6 @@ def worryheart(people):
                         provisoire.append(pp)
                         manquants.append(f'{order[i]}')
                     except FileNotFoundError:
-                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                        provisoire.append(Image.open(f'{image_path}/x.png'))
-                        save_image = False
-                        except FileNotFoundError:
                         manquants.append(f'{order[i]}')
                         # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
                         provisoire.append(Image.open(f'{image_path}/x.png'))
