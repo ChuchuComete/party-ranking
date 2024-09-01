@@ -1,6 +1,6 @@
 config.txt
 progress.json
-pr-avatar/
+pr-avatars/
 résultats/*/
 résultats/layoutPR.png
 *.xlsx

@@ -278,6 +278,13 @@ def create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, outputpat
     result.save(result_sheet_name)
 
 def worryheart(people):
+    # On convertit les jpg en png
+    jpg_files = [file for file in os.listdir(image_path) if file.lower().endswith('.jpg') or file.lower().endswith('.jpeg')]
+    for jpg_file in jpg_files:
+        exit_code = os.system(f'ffmpeg -y -i "{image_path}/{jpg_file}" "{image_path}/{jpg_file.split(".")[0]}.png" > NUL 2>&1')
+        if exit_code != 0:
+            print(f"Command failed with exit code {exit_code}.")
+
     global LINE1
     manquants = []
     # Indique si on a toutes les PP ou non
