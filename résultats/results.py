@@ -126,7 +126,9 @@ def get_ranker_ranks(ws, num_songs, pseudo):
                 try:
                     ranks.append(int(row.value)) if not scoring_pr else ranks.append(row.value)
                 except:
-                    if row.value.startswith("="):
+                    if row.value is None:
+                        pass
+                    elif row.value.startswith("="):
                         print(f"⚠️ Animal {pseudo} put a formula in ranking cells")
                     pass
 
@@ -281,7 +283,30 @@ def worryheart(people):
     # Indique si on a toutes les PP ou non
     save_image = True
     if people == 1:
-        print(people)
+        fontb = ImageFont.truetype(police_pseudo2, size=35) 
+        i=0
+        for j in range(len(C)):
+            provisoire=[]
+            while len(provisoire)!= C[j]:
+                try:
+                    # On regarde d'abord s'il y a une PP spéciale pour le PR
+                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
+                    pp = pp.resize((152, 152))
+                    provisoire.append(pp)
+                except FileNotFoundError:
+                    try:
+                        # Sinon, on tente de prendre la PP normale
+                        pp = Image.open(f'{image_path}/{order[i]}.png')
+                        pp = pp.resize((152, 152))
+                        provisoire.append(pp)
+                        manquants.append(f'{order[i]}')
+                    except FileNotFoundError:
+                        manquants.append(f'{order[i]}')
+                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                        provisoire.append(Image.open(f'{image_path}/x.png'))
+                        save_image = False
+                i+=1
+            avatars.append(provisoire)
     elif people <= 8:
         fontb = ImageFont.truetype(police_pseudo2, size=35) 
         i=0
