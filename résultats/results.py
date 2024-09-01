@@ -23,7 +23,7 @@ order = []  # laisser vide si ordre alphabétique
 config = configparser.ConfigParser()
 config.read('../config.txt')
 pr_path = config["general"]["pr_path"]
-image_path = f'{pr_path}/pr-avatar'
+image_path = f'{pr_path}/pr-avatars'
 results_path  = f"{pr_path}/Résultats"
 layout = Image.open(f"{pr_path}/Images/Layout.png")
 layoutsolo = Image.open(f"{pr_path}/Images/LayoutSolo.png")
