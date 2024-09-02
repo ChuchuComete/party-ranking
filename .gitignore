@@ -3,4 +3,5 @@ progress.json
 pr-avatars/
 résultats/*/
 résultats/layoutPR.png
+*/__pycache__/*
 *.xlsx

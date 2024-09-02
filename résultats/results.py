@@ -13,6 +13,8 @@ from pyexcel_xlsx import get_data
 import os
 import configparser
 
+VERSION = "1.0"
+print(f"results.py version {VERSION}")
 # Données
 
 pr = ''  # laisser vide si un seul pr dans le dossier
@@ -20,11 +22,22 @@ scoring_pr = False
 order = []  # laisser vide si ordre alphabétique
 
 
+
 config = configparser.ConfigParser()
 config.read('../config.txt')
 pr_path = config["general"]["pr_path"]
 image_path = f'{pr_path}/pr-avatars'
 results_path  = f"{pr_path}/Résultats"
+
+# Check de la configuration
+config_error = False
+for path in [pr_path, image_path, results_path]:
+    if not os.path.isdir(path):
+        config_error = True
+        print(f"❌ Le dossier {path} n'existe pas, vérifiez votre configuration !")
+if config_error:
+    exit()
+
 layout = Image.open(f"{pr_path}/Images/Layout.png")
 layoutsolo = Image.open(f"{pr_path}/Images/LayoutSolo.png")
 layout54 = Image.open(f"{pr_path}/Images/Layout54.png")
@@ -32,6 +45,8 @@ police_pseudo = f"{pr_path}/Images/agencyfb.ttf"
 save = f"{pr_path}/Résultats/LayoutPR.png"
 carre = Image.open(f"{pr_path}/Images/carre.png")
 police_pseudo2 = f"{pr_path}/Images/MusticaPro-SemiBold 600.otf"
+
+
 
 # Script
 
@@ -665,6 +680,8 @@ def pr_find():
         if '(' in str(base_file):
             pr_name = re.search('\\\\(.*) [(](.*)[)]', str(base_file)).group(1)
             break
+    if "pr_name" not in locals():
+        exit("❌ Pas de dossier de PR trouvé :(")
     return pr_name
 
 def get_affinity(outputpath):
