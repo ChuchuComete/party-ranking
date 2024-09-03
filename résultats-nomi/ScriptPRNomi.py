@@ -656,7 +656,7 @@ def verif_picker(dico):
     for elem in dico:
         if dico[elem] == False:
             liste.append(elem)
-    print(f"❌ Utilisateurs qui posent problème : {", ".join(map(str, liste))}")
+    print(f"❌ Utilisateurs qui posent problème : {', '.join(map(str, liste))}")
     
 
 def creationimages8(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):

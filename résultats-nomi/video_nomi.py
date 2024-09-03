@@ -8,6 +8,7 @@ from pytube import YouTube
 import re
 from ffmpeg_normalize import FFmpegNormalize
 import json
+import configparser
 
 
 transition = 1
@@ -15,6 +16,12 @@ pr = ''
 song_per_part = 40
 # Set this to True to get max resolution on Youtube videos (slower)
 max_resolution = False
+
+
+config = configparser.ConfigParser()
+config.read('../config.txt')
+pr_path = config["general"]["pr_path"]
+
 
 class SampledSong(Song):
     def __init__(self, picker, anime, song_type, info, link, score, sample, sample_length, ranks, order):
@@ -228,8 +235,8 @@ def get_progress(parts, range_list):
 
 
 def save_progress(progress):
-    with open('progress.json', 'w') as file:
-        json.dump(progress, file, indent=4)
+    with open(f"{pr_path}/résultats-nomi/progress.json", "w") as file:
+        json.dump(progress, file)
 
 
 def create_layouts(order, songs, output_path):
