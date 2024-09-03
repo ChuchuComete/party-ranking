@@ -126,7 +126,20 @@ def download_songs(songs, song_range):
             command = f'ffmpeg -i {link} -c copy {i}.{songs[i].extension}'
             execute_command(command)
         elif 'youtu' in link:
-            youtube_dl(link, f'{i}.mp4')
+            tries = 0
+            while tries <= 3:
+                try:
+                    youtube_dl(link, f'{i}.mp4')
+                    tries = 0
+                    break
+                except:
+                    tries += 1
+                    if tries <= 3:
+                        print(f"Erreur pendant le téléchargement de {link}, essai numéro {tries}...")
+                    else:
+                        exit(f"Erreur pendant le téléchargement de {link} :(")
+
+
 
 
 def get_song(i):
