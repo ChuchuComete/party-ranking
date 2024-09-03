@@ -2,6 +2,7 @@ config.txt
 progress.json
 pr-avatars/
 résultats/*/
+résultats-nomi/*/
 résultats/layoutPR.png
 */__pycache__/*
 *.xlsx
