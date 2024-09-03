@@ -147,7 +147,9 @@ def get_ranker_ranks(ws, num_songs, pseudo):
                 try:
                     ranks.append(int(row.value)) if not scoring_pr else ranks.append(row.value)
                 except:
-                    if row.value.startswith("="):
+                    if row.value is None:
+                        pass
+                    elif row.value.startswith("="):
                         print(f"⚠️ Animal {pseudo} put a formula in ranking cells")
                     pass
 
