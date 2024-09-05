@@ -267,6 +267,7 @@ def fuse_parts(parts):
                                    method='compose').set_position('center')
     pr_video = pr_video.subclip(0, pr_video.duration)
     pr_video.write_videofile(f'{pr}.mp4', threads=4)
+    os.remove("progress.json")
 
 
 if __name__ == '__main__':
