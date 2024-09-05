@@ -127,24 +127,27 @@ def youtube_dl(link, output_name):
 
 def download_songs(songs, song_range):
     for i in range(song_range[0], song_range[1]):
-        link = songs[i].link
-        print(link)
-        if 'catbox' in link:
-            command = f'ffmpeg -i {link} -c copy {i}.{songs[i].extension}'
-            execute_command(command)
-        elif 'youtu' in link:
-            tries = 0
-            while tries <= 3:
-                try:
-                    youtube_dl(link, f'{i}.mp4')
-                    tries = 0
-                    break
-                except:
-                    tries += 1
-                    if tries <= 3:
-                        print(f"Erreur pendant le téléchargement de {link}, essai numéro {tries}...")
-                    else:
-                        exit(f"Erreur pendant le téléchargement de {link} :(")
+        if os.path.exists(f"{pr_path}/résultats-nomi/temp/{i}.{songs[i].extension}"):
+            print(f"Chanson {i}.{songs[i].extension} trouvée dans le dossier temp, pas besoin de la télécharger !")
+        else:
+            link = songs[i].link
+            print(link)
+            if 'catbox' in link:
+                command = f'ffmpeg -i {link} -c copy {i}.{songs[i].extension}'
+                execute_command(command)
+            elif 'youtu' in link:
+                tries = 0
+                while tries <= 3:
+                    try:
+                        youtube_dl(link, f'{i}.mp4')
+                        tries = 0
+                        break
+                    except:
+                        tries += 1
+                        if tries <= 3:
+                            print(f"Erreur pendant le téléchargement de {link}, essai numéro {tries}...")
+                        else:
+                            exit(f"Erreur pendant le téléchargement de {link} :(")
 
 
 
