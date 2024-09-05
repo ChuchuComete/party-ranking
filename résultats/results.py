@@ -99,7 +99,10 @@ def get_data_script(sheet, songs):
 
     id_index = titres.index('ID')
     anime_index = titres.index('Anime Name')
-    song_type_index = titres.index('Song Type')
+    try :
+        song_type_index = titres.index('Song Type')
+    except :
+        song_type_index = -1
     song_info_index = titres.index('Song Info')
     try :
         rank_index = titres.index('Rank') if not scoring_pr else titres.index('Score')
@@ -110,10 +113,10 @@ def get_data_script(sheet, songs):
         if not row[anime_index].value:
             break
         if row[song_info_index].hyperlink:
-            song = Song(row[anime_index].value, row[song_type_index].value, row[song_info_index].value,
+            song = Song(row[anime_index].value, row[song_type_index].value if song_type_index != -1 else ' ', row[song_info_index].value,
                         row[song_info_index].hyperlink.target)
         else:
-            song = Song(row[anime_index].value, row[song_type_index].value, row[song_info_index].value,
+            song = Song(row[anime_index].value, row[song_type_index].value if song_type_index != -1 else ' ', row[song_info_index].value,
                         row[song_info_index].value)
         songs[row[id_index].value] = song
 
