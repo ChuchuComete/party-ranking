@@ -10,6 +10,7 @@ from ffmpeg_normalize import FFmpegNormalize
 import json
 import argparse
 import configparser
+import requests
 
 VERSION = "1.01"
 print(f"video.py version {VERSION}")
@@ -287,6 +288,18 @@ def fuse_parts(parts):
     pr_video.write_videofile(f'{pr}.mp4', threads=4)
     os.remove("progress.json")
 
+
+def download_json_profile_pic(user):
+    if not os.path.exists(f"{image_path}/{user['name']}.png"):
+        print(f"Téléchargement de la PP de {user['name']}...")
+        response = requests.get(user['image'])
+        if response.status_code == 200:
+            with open(f"{image_path}/{user['name']}.png", 'wb') as file:
+                file.write(response.content)
+            print(f"PP de {user['name']} téléchargée !")
+        else:
+            print(f"Failed to retrieve PP. Status code: {response.status_code}")
+
 def process_json(path):
     with open(path, 'r') as json_file:
         data = json.load(json_file)
@@ -294,6 +307,8 @@ def process_json(path):
         last_order = []
         global pr
         pr = data["name"]
+        for user in data["voters"]:
+            download_json_profile_pic(user)
         for i in range(0, len(data["songList"])):
             current_song = data["songList"][i]
             ranks = [vote["rank"] for vote in current_song["voters"]]
