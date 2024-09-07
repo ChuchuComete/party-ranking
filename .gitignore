@@ -6,3 +6,6 @@ résultats-nomi/*/
 résultats/layoutPR.png
 */__pycache__/*
 *.xlsx
+*.mp4
+*.mp3
+*.json
