@@ -13,14 +13,14 @@ from pyexcel_xlsx import get_data
 import os
 import configparser
 
-VERSION = "1.0"
+VERSION = "1.01"
 print(f"results.py version {VERSION}")
 # Données
 
 pr = ''  # laisser vide si un seul pr dans le dossier
 scoring_pr = False
 order = []  # laisser vide si ordre alphabétique
-
+C = []
 
 
 config = configparser.ConfigParser()
@@ -196,6 +196,13 @@ def pr_paths(path_list, pr):
     return [path for path in path_list if pr in str(path) and '(' in str(path)]
 
 
+def make_order_from_json(people_list):
+    for pseudo in people_list:
+        order.append(pseudo)
+        global C
+        C = nb_columns(len(people_list))
+
+
 def make_order(order, pr):
     if not len(order):
         path_list = pr_paths(Path('.').glob('**/*.xlsx'), pr)
@@ -295,7 +302,7 @@ def create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, outputpat
     print(f"✅ {pr} results.xlsx généré !") if final_sheet else print(f"✅ {pr} samples.xlsx généré !")
     result.save(result_sheet_name)
 
-def worryheart(people):
+def worryheart(people, from_json = False):
     # On convertit les jpg en png
     jpg_files = [file for file in os.listdir(image_path) if file.lower().endswith('.jpg') or file.lower().endswith('.jpeg')]
     for jpg_file in jpg_files:
@@ -307,6 +314,8 @@ def worryheart(people):
     manquants = []
     # Indique si on a toutes les PP ou non
     save_image = True
+    if from_json:
+        make_order_from_json(people)
     if people == 1:
         fontb = ImageFont.truetype(police_pseudo2, size=35) 
         i=0
@@ -332,6 +341,13 @@ def worryheart(people):
                         save_image = False
                 i+=1
             avatars.append(provisoire)
+        
+        incr = 111
+        for i in range(C[0]):
+            layoutsolo.paste(avatars[0][i], (10,incr))
+            draw.text((86,incr-3),order[i],fill='white', stroke_fill='black', stroke_width=1, font=fontb,anchor="ms")
+            incr += 91+152
+        
     elif people <= 8:
         fontb = ImageFont.truetype(police_pseudo2, size=35) 
         i=0
@@ -600,9 +616,8 @@ def worryheart(people):
         print(f"⚠️ PP manquantes : {manquants}")
         print(f"❌ Layout non généré car PP manquante(s), merci de les fournir et de relancer le script")
             
-def nb_columns(order):
+def nb_columns(people):
     C = []
-    people = len(order)
     if people <= 18:
         if people % 2 == 0:
             for i in range(2):
@@ -722,7 +737,7 @@ if __name__ == '__main__':
         pr = pr_find()
 
     make_order(order, pr)
-    C = nb_columns(order)
+    C = nb_columns(len(order))
     for path in path_list:
         wb = load_workbook(path)
         ws = wb.active

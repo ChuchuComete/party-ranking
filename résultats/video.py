@@ -1,4 +1,4 @@
-from results import nb_columns, create_results_sheet, Song
+from results import nb_columns, create_results_sheet, worryheart, make_order_from_json, Song
 from openpyxl import load_workbook
 from pathlib import Path
 from moviepy.editor import *
@@ -8,7 +8,11 @@ from pytube import YouTube
 import re
 from ffmpeg_normalize import FFmpegNormalize
 import json
+import argparse
+import configparser
 
+VERSION = "1.01"
+print(f"video.py version {VERSION}")
 
 transition = 1
 pr = ''
@@ -16,6 +20,20 @@ song_per_part = 45
 # Set this to True to get max resolution on Youtube videos (slower)
 max_resolution = False
 
+config = configparser.ConfigParser()
+config.read('../config.txt')
+pr_path = config["general"]["pr_path"]
+image_path = f'{pr_path}/pr-avatars'
+results_path  = f"{pr_path}/Résultats"
+
+# Check de la configuration
+config_error = False
+for path in [pr_path, image_path, results_path]:
+    if not os.path.isdir(path):
+        config_error = True
+        print(f"❌ Le dossier {path} n'existe pas, vérifiez votre configuration !")
+if config_error:
+    exit()
 
 
 class SampledSong(Song):
@@ -167,7 +185,7 @@ def create_video(song_range, output_path):
         black = ImageClip('black.png').set_duration(clips[stop - 1].duration).set_position('center', 'center')
         pr_part = CompositeVideoClip([black, video, video_layout])
     else:
-        pr_part = CompositeVideoClip([video, video_layout])
+        pr_part = CompositeVideoClip([video, video_layout]) 
     pr_part.write_videofile(output_path, threads=4)
 
 def check_sample(clip: VideoFileClip, song: SampledSong):
@@ -223,7 +241,7 @@ def save_progress(progress):
 
 def create_layouts(order, songs, output_path):
     people = len(order)
-    C = nb_columns(order)
+    C = nb_columns(len(order))
     pr_range = range(1, len(songs) + 1)
 
     import ScriptPR as Nono
@@ -269,22 +287,43 @@ def fuse_parts(parts):
     pr_video.write_videofile(f'{pr}.mp4', threads=4)
     os.remove("progress.json")
 
+def process_json(path):
+    with open(path, 'r') as json_file:
+        data = json.load(json_file)
+        songs = {}
+        last_order = []
+        global pr
+        pr = data["name"]
+        for i in range(0, len(data["songList"])):
+            current_song = data["songList"][i]
+            ranks = [vote["rank"] for vote in current_song["voters"]]
+            order = [vote["name"] for vote in current_song["voters"]]
+            last_order = order
+            songs[i+1] = SampledSong(current_song["anime"], current_song["type"], current_song["title"],current_song["urlVideo"], current_song["totalRank"], current_song["startSample"], current_song["sampleLength"], ranks, order)
+    return songs, last_order
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--json', type=str, required=False, help="JSON file path")
+    args = parser.parse_args()
+
     scoring_pr = False
     base_path = os.getcwd()
     Path('temp').mkdir(parents=True, exist_ok=True)
     temp_path = os.path.join(base_path, 'temp')
 
-    result_sheet = get_result_sheet()
-    ws = result_sheet.active
+    if args.json is not None:
+        songs, order = process_json(args.json)
+        make_order_from_json(order)
+        worryheart(len(order))
+    else :
+        result_sheet = get_result_sheet()
+        ws = result_sheet.active
 
-    songs, order = get_results(ws)
-
+        songs, order = get_results(ws)
     parts = len(songs) // song_per_part if not len(songs) % song_per_part else len(songs) // song_per_part + 1
     range_list = split(len(songs), parts)
     progress = get_progress(parts, range_list)
-
     pr_range = range(1, len(songs) + 1)
 
     if not progress['layout']:
@@ -311,6 +350,7 @@ if __name__ == '__main__':
 
         normalize_audio(song_range)
         output_path = f'{pr}.mp4' if progress['parts'] == 1 else f'temp/part{progress["done"]}.mp4'
+
         create_video(song_range, output_path)
         progress['done'] += 1
 
@@ -325,7 +365,7 @@ if __name__ == '__main__':
 
     if progress['done'] == progress['parts'] and not progress['video']:
         #song_list = [songs[i] for i in pr_range]
-        #create_results_sheet(pr, order, song_list, scoring_pr, True, final_sheet=True)
+            
         #get_affinity()
 
         fuse_parts(progress['parts'])
