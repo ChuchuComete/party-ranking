@@ -14,6 +14,8 @@ Enfin, mettre les PP des gens dans le dossier `pr-avatars`.
 Un dossier comprenant le dossier 'Images' (Images.zip contient tout ce qu'il y a dans le dossier Images), le dossier 'Vidéos' et le dossier 'PR Avatar' 
 Le dossier PR Avatar contient les avatars des personnes (à vous même de le faire)
 
+Copier le fichier `config.txt.example` et renomer le en `config.txt` et modifier la configuration
+
 **Pour pouvoir télécharger des sons (utiliser ffmpeg)**: 
 - Télécharger `ffmpeg-5.0.1-full_build.7z`(dispo sur https://www.ffmpeg.org/)
 - Aller dans "Modifier les variables d'environnement système"

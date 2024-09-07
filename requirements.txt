@@ -7,3 +7,8 @@ ffmpeg_normalize
 opencv-python
 discord
 requests
+pyperclip
+pandas
+matplotlib
+pyexcel_ods3
+pyexcel_xlsx
