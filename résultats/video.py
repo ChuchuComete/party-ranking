@@ -11,6 +11,9 @@ import json
 import argparse
 import configparser
 import requests
+import aiohttp
+import asyncio
+
 
 VERSION = "1.01"
 print(f"video.py version {VERSION}")
@@ -139,15 +142,28 @@ def youtube_dl(link, output_name):
 
 
 
+async def download_file(session, url, filename):
+    async with session.get(url) as response:
+        if response.status == 200:
+            with open(filename, 'wb') as file:
+                file.write(await response.read())
+        else:
+            print(f"Failed to download {url}")
+
+async def download_songs_async(songs, song_range):
+    async with aiohttp.ClientSession() as session:
+        tasks = []
+        for i in range(song_range[0], song_range[1]):
+            link = songs[i].link
+            print("Downloading: " + link)
+            if 'catbox' in link:
+                tasks.append(download_file(session, link, f'{i}.{songs[i].extension}'))
+            elif 'youtu' in link:
+                tasks.append(asyncio.to_thread(youtube_dl, link, f'{i}.mp4'))
+        await asyncio.gather(*tasks)
+
 def download_songs(songs, song_range):
-    for i in range(song_range[0], song_range[1]):
-        link = songs[i].link
-        print(link)
-        if 'catbox' in link:
-            command = f'ffmpeg -i {link} -c copy {i}.{songs[i].extension}'
-            execute_command(command)
-        elif 'youtu' in link:
-            youtube_dl(link, f'{i}.mp4')
+    asyncio.run(download_songs_async(songs, song_range))
 
 
 def get_song(i):
