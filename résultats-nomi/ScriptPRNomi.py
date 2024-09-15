@@ -28,6 +28,7 @@ Mustica = 'MusticaPro-SemiBold 600.otf'
 Comfortaa = 'Comfortaa-Regular.ttf'
 njnaruto = 'njnaruto.ttf'
 arlrdbd = 'arlrdbd.ttf'
+arialunicode = 'arial-unicode-ms.ttf'
 
 def entreescores8(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, output_path):
     c=len(C)
@@ -36,9 +37,13 @@ def entreescores8(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, output
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(Mustica, size=60) 
     font2= ImageFont.truetype(Mustica, size=65)
-    font3= ImageFont.truetype(Comfortaa, size=45)
-    font4= ImageFont.truetype(Comfortaa, size=35)
-    font5= ImageFont.truetype(Comfortaa, size=23)
+    fontunicode3= ImageFont.truetype(Comfortaa, size=45)
+    fontunicode4= ImageFont.truetype(Comfortaa, size=35)
+    fontunicode5= ImageFont.truetype(Comfortaa, size=23)
+    fontunicode2 = ImageFont.truetype(arialunicode, size=65)
+    fontunicode3 = ImageFont.truetype(arialunicode, size=45)
+    fontunicode4 = ImageFont.truetype(arialunicode, size=35)
+    fontunicode5 = ImageFont.truetype(arialunicode, size=23)
     fontpick = ImageFont.truetype(arlrdbd, size = 40)
     L2=L.copy()
     L2.remove(L2[Nomi-1])
@@ -123,28 +128,28 @@ def entreescores8(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, output
     H1c=40
     
     if len(Titre)<=33:
-        w1 = draw.textlength(Titre,font=font3)
-        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=font3)
+        w1 = draw.textlength(Titre,font=fontunicode3)
+        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode3)
     elif len(Titre)<=69:
-        w1 = draw.textlength(Titre,font=font4)
-        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=font4)
+        w1 = draw.textlength(Titre,font=fontunicode4)
+        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode4)
     else:
-        w1 = draw.textlength(Titre,font=font5)
-        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=font5)
+        w1 = draw.textlength(Titre,font=fontunicode5)
+        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode5)
 
 
     W2,H2=(1920,1000)
     H2b=1010
     H2c=1020
     if len(Musique)<=33:
-        w2 = draw.textlength(Musique,font=font3)
-        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=font3)
+        w2 = draw.textlength(Musique,font=fontunicode3)
+        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode3)
     elif len(Musique)<=69:
-        w2 = draw.textlength(Musique,font=font4)
-        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=font4)
+        w2 = draw.textlength(Musique,font=fontunicode4)
+        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode4)
     else:
-        w2  = draw.textlength(Musique,font=font5)
-        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=font5)
+        w2  = draw.textlength(Musique,font=fontunicode5)
+        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode5)
 
     draw.text((420,942), Picker, fill = 'rgb(255, 255, 255)', font=fontpick)
 
@@ -161,9 +166,13 @@ def entreescores14(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(Mustica, size=60) 
     font2= ImageFont.truetype(Mustica, size=65)
-    font3= ImageFont.truetype(Comfortaa, size=45)
-    font4= ImageFont.truetype(Comfortaa, size=35)
-    font5= ImageFont.truetype(Comfortaa, size=23)
+    fontunicode3= ImageFont.truetype(Comfortaa, size=45)
+    fontunicode4= ImageFont.truetype(Comfortaa, size=35)
+    fontunicode5= ImageFont.truetype(Comfortaa, size=23)
+    fontunicode2 = ImageFont.truetype(arialunicode, size=65)
+    fontunicode3 = ImageFont.truetype(arialunicode, size=45)
+    fontunicode4 = ImageFont.truetype(arialunicode, size=35)
+    fontunicode5 = ImageFont.truetype(arialunicode, size=23)
     fontpick = ImageFont.truetype(arlrdbd, size = 40)
     L2=L.copy()
     L2.remove(L2[Nomi-1])
@@ -247,27 +256,27 @@ def entreescores14(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     H1c=40
     
     if len(Titre)<=33:
-        w1 = draw.textlength(Titre,font=font3)
-        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=font3)
+        w1 = draw.textlength(Titre,font=fontunicode3)
+        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode3)
     elif len(Titre)<=69:
-        w1 = draw.textlength(Titre,font=font4)
-        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=font4)
+        w1 = draw.textlength(Titre,font=fontunicode4)
+        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode4)
     else:
-        w1 = draw.textlength(Titre,font=font5)
-        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=font5)
+        w1 = draw.textlength(Titre,font=fontunicode5)
+        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode5)
 
     W2,H2=(1920,1000)
     H2b=1010
     H2c=1020
     if len(Musique)<=33:
-        w2 = draw.textlength(Musique,font=font3)
-        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=font3)
+        w2 = draw.textlength(Musique,font=fontunicode3)
+        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode3)
     elif len(Musique)<=69:
-        w2 = draw.textlength(Musique,font=font4)
-        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=font4)
+        w2 = draw.textlength(Musique,font=fontunicode4)
+        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode4)
     else:
-        w2  = draw.textlength(Musique,font=font5)
-        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=font5)
+        w2  = draw.textlength(Musique,font=fontunicode5)
+        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode5)
 
     draw.text((420,942), Picker, fill = 'rgb(255, 255, 255)', font=fontpick)
 
@@ -284,9 +293,13 @@ def entreescores18(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(Mustica, size=60) 
     font2= ImageFont.truetype(Mustica, size=65)
-    font3= ImageFont.truetype(Comfortaa, size=45)
-    font4= ImageFont.truetype(Comfortaa, size=35)
-    font5= ImageFont.truetype(Comfortaa, size=23)
+    fontunicode3= ImageFont.truetype(Comfortaa, size=45)
+    fontunicode4= ImageFont.truetype(Comfortaa, size=35)
+    fontunicode5= ImageFont.truetype(Comfortaa, size=23)
+    fontunicode2 = ImageFont.truetype(arialunicode, size=65)
+    fontunicode3 = ImageFont.truetype(arialunicode, size=45)
+    fontunicode4 = ImageFont.truetype(arialunicode, size=35)
+    fontunicode5 = ImageFont.truetype(arialunicode, size=23)
     fontpick = ImageFont.truetype(arlrdbd, size = 40)
     L2=L.copy()
     L2.remove(L2[Nomi-1])
@@ -368,27 +381,27 @@ def entreescores18(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     H1c=40
     
     if len(Titre)<=33:
-        w1 = draw.textlength(Titre,font=font3)
-        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=font3)
+        w1 = draw.textlength(Titre,font=fontunicode3)
+        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode3)
     elif len(Titre)<=69:
-        w1 = draw.textlength(Titre,font=font4)
-        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=font4)
+        w1 = draw.textlength(Titre,font=fontunicode4)
+        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode4)
     else:
-        w1 = draw.textlength(Titre,font=font5)
-        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=font5)
+        w1 = draw.textlength(Titre,font=fontunicode5)
+        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode5)
 
     W2,H2=(1920,1000)
     H2b=1010
     H2c=1020
     if len(Musique)<=33:
-        w2 = draw.textlength(Musique,font=font3)
-        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=font3)
+        w2 = draw.textlength(Musique,font=fontunicode3)
+        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode3)
     elif len(Musique)<=69:
-        w2 = draw.textlength(Musique,font=font4)
-        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=font4)
+        w2 = draw.textlength(Musique,font=fontunicode4)
+        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode4)
     else:
-        w2 = draw.textlength(Musique,font=font5)
-        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=font5)
+        w2 = draw.textlength(Musique,font=fontunicode5)
+        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode5)
 
     draw.text((420,942), Picker, fill = 'rgb(255, 255, 255)', font=fontpick)
 
@@ -407,9 +420,13 @@ def entreescores36(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(njnaruto, size=28) 
     font2= ImageFont.truetype(Mustica, size=65)
-    font3= ImageFont.truetype(Comfortaa, size=45)
-    font4= ImageFont.truetype(Comfortaa, size=35)
-    font5= ImageFont.truetype(Comfortaa, size=23)
+    fontunicode3= ImageFont.truetype(Comfortaa, size=45)
+    fontunicode4= ImageFont.truetype(Comfortaa, size=35)
+    fontunicode5= ImageFont.truetype(Comfortaa, size=23)
+    fontunicode2 = ImageFont.truetype(arialunicode, size=65)
+    fontunicode3 = ImageFont.truetype(arialunicode, size=45)
+    fontunicode4 = ImageFont.truetype(arialunicode, size=35)
+    fontunicode5 = ImageFont.truetype(arialunicode, size=23)
     fontpick = ImageFont.truetype(arlrdbd, size = 40)
     L2=L.copy()
     L2.remove(L2[Nomi-1])
@@ -490,30 +507,29 @@ def entreescores36(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     W1,H1=(1920,20)
     H1b=30
     H1c=40
-    
     if len(Titre)<=33:
-        w1 = draw.textlength(Titre,font=font3)
-        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=font3)
+        w1 = draw.textlength(Titre,font=fontunicode3)
+        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode3)
     elif len(Titre)<=69:
-        w1 = draw.textlength(Titre,font=font4)
-        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=font4)
+        w1 = draw.textlength(Titre,font=fontunicode4)
+        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode4)
     else:
-        w1 = draw.textlength(Titre,font=font5)
-        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=font5)
+        w1 = draw.textlength(Titre,font=fontunicode5)
+        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode5)
 
 
     W2,H2=(1920,1000)
     H2b=1010
     H2c=1020
     if len(Musique)<=33:
-        w2 = draw.textlength(Musique,font=font3)
-        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=font3)
+        w2 = draw.textlength(Musique,font=fontunicode3)
+        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode3)
     elif len(Musique)<=69:
-        w2 = draw.textlength(Musique,font=font4)
-        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=font4)
+        w2 = draw.textlength(Musique,font=fontunicode4)
+        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode4)
     else:
-        w2 = draw.textlength(Musique,font=font5)
-        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=font5)
+        w2 = draw.textlength(Musique,font=fontunicode5)
+        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode5)
 
 
     draw.text((420,942), Picker, fill = 'rgb(255, 255, 255)', font=fontpick)
@@ -534,9 +550,13 @@ def entreescores54(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
 
     font = ImageFont.truetype(njnaruto, size=28) 
     font2= ImageFont.truetype(Mustica, size=65)
-    font3= ImageFont.truetype(Comfortaa, size=45)
-    font4= ImageFont.truetype(Comfortaa, size=35)
-    font5= ImageFont.truetype(Comfortaa, size=23)
+    fontunicode3= ImageFont.truetype(Comfortaa, size=45)
+    fontunicode4= ImageFont.truetype(Comfortaa, size=35)
+    fontunicode5= ImageFont.truetype(Comfortaa, size=23)
+    fontunicode2 = ImageFont.truetype(arialunicode, size=65)
+    fontunicode3 = ImageFont.truetype(arialunicode, size=45)
+    fontunicode4 = ImageFont.truetype(arialunicode, size=35)
+    fontunicode5 = ImageFont.truetype(arialunicode, size=23)
     fontpick = ImageFont.truetype(arlrdbd, size = 40)
     L2=L.copy()
     L2.remove(L2[Nomi-1])
@@ -620,28 +640,28 @@ def entreescores54(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     H1c=30
     
     if len(Titre)<=33:
-        w1 = draw.textlength(Titre,font=font3)
-        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=font3)
+        w1 = draw.textlength(Titre,font=fontunicode3)
+        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode3)
     elif len(Titre)<=69:
-        w1 = draw.textlength(Titre,font=font4)
-        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=font4)
+        w1 = draw.textlength(Titre,font=fontunicode4)
+        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode4)
     else:
-        w1 = draw.textlength(Titre,font=font5)
-        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=font5)
+        w1 = draw.textlength(Titre,font=fontunicode5)
+        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode5)
 
 
     W2,H2=(1920,1015)
     H2b=1025
     H2c=1035
     if len(Musique)<=33:
-        w2 = draw.textlength(Musique,font=font3)
-        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=font3)
+        w2 = draw.textlength(Musique,font=fontunicode3)
+        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode3)
     elif len(Musique)<=69:
-        w2 = draw.textlength(Musique,font=font4)
-        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=font4)
+        w2 = draw.textlength(Musique,font=fontunicode4)
+        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode4)
     else:
-        w2 = draw.textlength(Musique,font=font5)
-        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=font5)
+        w2 = draw.textlength(Musique,font=fontunicode5)
+        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode5)
         
     draw.text((535,962), Picker, fill = 'rgb(255, 255, 255)', font=fontpick)
 
