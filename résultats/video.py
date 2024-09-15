@@ -301,7 +301,7 @@ def download_json_profile_pic(user):
             print(f"Failed to retrieve PP. Status code: {response.status_code}")
 
 def process_json(path):
-    with open(path, 'r') as json_file:
+    with open(path, 'r', encoding='utf-8') as json_file:
         data = json.load(json_file)
         songs = {}
         last_order = []
