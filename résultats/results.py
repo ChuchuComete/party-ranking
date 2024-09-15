@@ -27,7 +27,7 @@ config = configparser.ConfigParser()
 config.read('../config.txt')
 pr_path = config["general"]["pr_path"]
 image_path = f'{pr_path}/pr-avatars'
-results_path  = f"{pr_path}/Résultats"
+results_path  = f"{pr_path}/résultats"
 
 # Check de la configuration
 config_error = False
@@ -38,13 +38,13 @@ for path in [pr_path, image_path, results_path]:
 if config_error:
     exit()
 
-layout = Image.open(f"{pr_path}/Images/Layout.png")
-layoutsolo = Image.open(f"{pr_path}/Images/LayoutSolo.png")
-layout54 = Image.open(f"{pr_path}/Images/Layout54.png")
-police_pseudo = f"{pr_path}/Images/agencyfb.ttf"
-save = f"{pr_path}/Résultats/LayoutPR.png"
-carre = Image.open(f"{pr_path}/Images/carre.png")
-police_pseudo2 = f"{pr_path}/Images/MusticaPro-SemiBold 600.otf"
+layout = Image.open(f"{pr_path}/images/Layout.png")
+layoutsolo = Image.open(f"{pr_path}/images/LayoutSolo.png")
+layout54 = Image.open(f"{pr_path}/images/Layout54.png")
+police_pseudo = f"{pr_path}/images/agencyfb.ttf"
+save = f"{pr_path}/résultats/layoutPR.png"
+carre = Image.open(f"{pr_path}/images/carre.png")
+police_pseudo2 = f"{pr_path}/images/MusticaPro-SemiBold 600.otf"
 
 
 

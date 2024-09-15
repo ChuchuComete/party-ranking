@@ -25,7 +25,7 @@ config = configparser.ConfigParser()
 config.read('../config.txt')
 pr_path = config["general"]["pr_path"]
 image_path = f'{pr_path}/pr-avatars'
-results_path  = f"{pr_path}/Résultats"
+results_path  = f"{pr_path}/résultats"
 
 # Check de la configuration
 config_error = False

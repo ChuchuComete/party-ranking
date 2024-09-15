@@ -11,14 +11,14 @@ pr_path = config["general"]["pr_path"]
 
 #Données (Ce qu'il y a à modifier):
 
-Chemin = f'{pr_path}/Images'
+Chemin = f'{pr_path}/images'
 os.chdir(Chemin)
 
 Bro=PIL.Image.open('Bronze2.png')
 Arg=PIL.Image.open('Argent2.png')
 Or=PIL.Image.open('Or2.png')
 
-LayoutPR =  f"{pr_path}/résultats/LayoutPR.png"
+layoutPR =  f"{pr_path}/résultats/layoutPR.png"
 
 #Polices
 
@@ -31,7 +31,7 @@ njnaruto = 'njnaruto.ttf'
 def entreescoressolo(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
     c=len(C)
     N=len(L)
-    img = PIL.Image.open(LayoutPR)
+    img = PIL.Image.open(layoutPR)
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(Mustica, size=60) 
     font2= ImageFont.truetype(Mustica, size=65)
@@ -85,7 +85,7 @@ def entreescoressolo(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
 def entreescores8(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
     c=len(C)
     N=len(L)
-    img = PIL.Image.open(LayoutPR)
+    img = PIL.Image.open(layoutPR)
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(Mustica, size=60) 
     font2= ImageFont.truetype(Mustica, size=65)
@@ -171,7 +171,7 @@ def entreescores8(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
 def entreescores14(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
     c=len(C)
     N=len(L)
-    img = PIL.Image.open(LayoutPR)
+    img = PIL.Image.open(layoutPR)
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(Mustica, size=60) 
     font2= ImageFont.truetype(Mustica, size=65)
@@ -254,7 +254,7 @@ def entreescores14(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
 def entreescores18(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
     c=len(C)
     N=len(L)
-    img = PIL.Image.open(LayoutPR)
+    img = PIL.Image.open(layoutPR)
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(Mustica, size=60) 
     font2= ImageFont.truetype(Mustica, size=65)
@@ -336,7 +336,7 @@ def entreescores18(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
 def entreescores36(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
     c=len(C)
     N=len(L)
-    img = PIL.Image.open(LayoutPR)
+    img = PIL.Image.open(layoutPR)
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(njnaruto, size=28) 
     font2= ImageFont.truetype(Mustica, size=65)
@@ -421,7 +421,7 @@ def entreescores36(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
 def entreescores54(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
     c=len(C)
     N=len(L)
-    img = PIL.Image.open(LayoutPR)
+    img = PIL.Image.open(layoutPR)
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(njnaruto, size=28) 
     font2= ImageFont.truetype(Mustica, size=65)

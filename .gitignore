@@ -11,3 +11,4 @@ résultats/layoutPR.png
 *.json
 
 **/env
+**/venv
