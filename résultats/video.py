@@ -325,12 +325,13 @@ def process_json(path):
         pr = data["name"]
         for user in data["voters"]:
             download_json_profile_pic(user)
+        data["songList"] = sorted(data["songList"], key=lambda x: x["totalRank"])
         for i in range(0, len(data["songList"])):
             current_song = data["songList"][i]
             ranks = [vote["rank"] for vote in current_song["voters"]]
             order = [vote["name"] for vote in current_song["voters"]]
             last_order = order
-            songs[i+1] = SampledSong(current_song["anime"], current_song["type"], current_song["title"],current_song["urlVideo"], current_song["totalRank"], current_song["startSample"], current_song["sampleLength"], ranks, order)
+            songs[i+1] = SampledSong(current_song["anime"], "- " + current_song["type"], current_song["artist"] + " - " + current_song["title"],current_song["urlVideo"], current_song["totalRank"], current_song["startSample"], current_song["sampleLength"], ranks, order)
     return songs, last_order
 
 if __name__ == '__main__':
