@@ -325,7 +325,7 @@ def process_json(path):
         pr = data["name"]
         for user in data["voters"]:
             download_json_profile_pic(user)
-        data["songList"] = sorted(data["songList"], key=lambda x: x["totalRank"])
+        data["songList"] = sorted(data["songList"], key=lambda x: x["rankPosition"])
         for i in range(0, len(data["songList"])):
             current_song = data["songList"][i]
             ranks = [vote["rank"] for vote in current_song["voters"]]
