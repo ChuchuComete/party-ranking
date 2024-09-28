@@ -12,3 +12,4 @@ pandas
 matplotlib
 pyexcel_ods3
 pyexcel_xlsx
+odfpy

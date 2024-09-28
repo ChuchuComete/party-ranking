@@ -12,3 +12,7 @@ résultats/layoutPR.png
 
 **/env
 **/venv
+
+*.ods
+résultats/*_Affinity.png
+résultats/*_stats.txt

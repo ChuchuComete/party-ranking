@@ -1,11 +1,13 @@
+import argparse
 from pathlib import Path
 import pandas as pd
 import numpy as np
 from scipy import spatial
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.patheffects as PathEffects
-import re
-import csv
+import json
 
 # -------- Mandatory settings --------
 
@@ -137,7 +139,7 @@ def plot_affinity(affinity, rankers, PR_name):
 
     ax.set_title(f"{PR_name}\nAffinity Between People")
     fig.tight_layout()
-    plt.savefig(f"{PR_name}_Affinity.png", dpi=199)
+    plt.savefig(f"{PR_name}_Affinity.png", dpi=300)
 
 
 def NormalizeData(data, nb_songs):
@@ -305,7 +307,40 @@ def cut_df_scoring_grid(dataframe):
     return dataframe
 
 
-def main():
+def process_json(args):
+    with open(args.json, 'r') as f:
+        data = json.load(f)
+    
+    # Extract relevant data from JSON
+    song_list = data['songList']
+    voters = data['voters']
+    
+    # Create a DataFrame from the JSON data
+    rows = []
+    for song in song_list:
+        row = {}
+        for voter in song['voters']:
+            row[voter['name']] = voter['rank']
+        rows.append(row)
+    
+    dataframe = pd.DataFrame(rows)
+    
+    print("\nScore grid based on the settings you entered, check if it's correct!\n")
+    print(dataframe)
+    
+    PR_name = PARTY_RANK_NAME if PARTY_RANK_NAME else data['name']
+    
+    # Write some stats in a text file
+    process_stats(dataframe, PR_name)
+    
+    if SCORING_METHOD == "ranking":
+        affinity, rankers = process_ranking_affinity(dataframe)
+    else:
+        affinity, rankers = process_rating_affinity(dataframe)
+    
+    plot_affinity(affinity, rankers, PR_name)
+    
+def process_ods():
     sheet_path = Path(".")
     sheet_list = list((sheet_path.glob("*.ods")))
 
@@ -332,6 +367,16 @@ def main():
 
             plot_affinity(affinity, rankers, PR_name)
 
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--json', type=str, required=False, help="JSON file path")
+    args = parser.parse_args()
+    
+    if (args.json is not None):
+        process_json(args)
+    else:
+        process_ods()
+    
 
 if __name__ == "__main__":
     main()
