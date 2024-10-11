@@ -36,10 +36,11 @@ class SampledSong(Song):
         if sample_length <= 0:
             exit("❌ Une ou plusieurs des cases Sample Length contient une valeur invalide ! (<= 0)")
         self.scores = {order[i]: ranks[i] for i in range(len(order))}
-        if 'catbox' in link:
-            self.extension = get_extension(link)
-        elif 'youtu' in link:
+        if 'youtu' in link:
             self.extension = 'mp4'
+        else:
+            self.extension = get_extension(link)
+            
 
 
 def get_result_sheet():
@@ -93,7 +94,7 @@ def execute_command(command):
 
 
 def get_extension(link):
-    return re.search(r'(?:moe|video)/.*\.(.+)$', link).group(1)
+    return link.split(".")[-1]
 
 
 def youtube_dl(link, output_name):
@@ -132,7 +133,7 @@ def download_songs(songs, song_range):
         else:
             link = songs[i].link
             print(link)
-            if 'catbox' in link:
+            if 'catbox' in link or 'animemusicquiz.com' in link:
                 command = f'ffmpeg -i {link} -c copy {i}.{songs[i].extension}'
                 execute_command(command)
             elif 'youtu' in link:
