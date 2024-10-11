@@ -53,7 +53,7 @@ class SampledSong(Song):
         if sample_length <= 0:
             exit("❌ Une ou plusieurs des cases Sample Length contient une valeur invalide ! (<= 0)")
         self.scores = {order[i]: ranks[i] for i in range(len(order))}
-        if 'catbox' in link:
+        if 'catbox' in link or 'animemusicquiz.com' in link:
             self.extension = get_extension(link)
         elif 'youtu' in link:
             self.extension = 'mp4'
@@ -109,7 +109,7 @@ def execute_command(command):
 
 
 def get_extension(link):
-    return re.search(r'(?:moe|video)/.*\.(.+)$', link).group(1)
+    return link.split(".")[-1]
 
 
 def youtube_dl(link, output_name):
@@ -156,7 +156,7 @@ async def download_songs_async(songs, song_range):
         for i in range(song_range[0], song_range[1]):
             link = songs[i].link
             print("Downloading: " + link)
-            if 'catbox' in link:
+            if 'catbox' in link or 'animemusicquiz.com' in link:
                 tasks.append(download_file(session, link, f'{i}.{songs[i].extension}'))
             elif 'youtu' in link:
                 tasks.append(asyncio.to_thread(youtube_dl, link, f'{i}.mp4'))
@@ -306,15 +306,14 @@ def fuse_parts(parts):
 
 
 def download_json_profile_pic(user):
-    if not os.path.exists(f"{image_path}/{user['name']}.png"):
-        print(f"Téléchargement de la PP de {user['name']}...")
-        response = requests.get(user['image'])
-        if response.status_code == 200:
-            with open(f"{image_path}/{user['name']}.png", 'wb') as file:
-                file.write(response.content)
-            print(f"PP de {user['name']} téléchargée !")
-        else:
-            print(f"Failed to retrieve PP. Status code: {response.status_code}")
+    print(f"Téléchargement de la PP de {user['name']}...")
+    response = requests.get(user['image'])
+    if response.status_code == 200:
+        with open(f"{image_path}/{user['name']}.png", 'wb') as file:
+            file.write(response.content)
+        print(f"PP de {user['name']} téléchargée !")
+    else:
+        print(f"Failed to retrieve PP. Status code: {response.status_code}")
 
 def process_json(path):
     with open(path, 'r', encoding='utf-8') as json_file:
