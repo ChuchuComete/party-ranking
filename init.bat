@@ -17,7 +17,7 @@ if exist %VENV_DIR% (
 
 if not exist config.txt (
     echo Config file not found. Creating...
-    copy config.example.txt config.txt
+    copy config.txt.example config.txt
 )
 
 cmd /k

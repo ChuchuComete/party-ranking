@@ -18,7 +18,7 @@ fi
 
 if [ ! -f "config.txt" ]; then
     echo "Config file not found. Creating..."
-    cp config.example.txt config.txt
+    cp config.txt.example config.txt
 fi
 
 exec "$SHELL"

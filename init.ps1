@@ -16,7 +16,7 @@ if (Test-Path $VENV_DIR) {
 
 if (-Not (Test-Path "config.txt")) {
     Write-Output "Config file not found. Creating..."
-    Copy-Item "config.example.txt" "config.txt"
+    Copy-Item "config.txt.example" "config.txt"
 }
 
 $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") > $null
