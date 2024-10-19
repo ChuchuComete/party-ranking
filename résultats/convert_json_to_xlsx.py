@@ -39,7 +39,7 @@ def convert_json_to_excel(args):
     print(dataframe)
     
     # Save DataFrame to Excel with openpyxl
-    with pd.ExcelWriter('results.xlsx', engine='openpyxl') as writer:
+    with pd.ExcelWriter(f"{data['name']}_results.xlsx", engine='openpyxl') as writer:
         dataframe.to_excel(writer, index=False, sheet_name='Results')
         worksheet = writer.sheets['Results']
         
