@@ -333,7 +333,6 @@ def worryheart(people, from_json = False):
                         pp = Image.open(f'{image_path}/{order[i]}.png')
                         pp = pp.resize((152, 152))
                         provisoire.append(pp)
-                        manquants.append(f'{order[i]}')
                     except FileNotFoundError:
                         manquants.append(f'{order[i]}')
                         # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
@@ -365,7 +364,6 @@ def worryheart(people, from_json = False):
                         pp = Image.open(f'{image_path}/{order[i]}.png')
                         pp = pp.resize((152, 152))
                         provisoire.append(pp)
-                        manquants.append(f'{order[i]}')
                     except FileNotFoundError:
                         manquants.append(f'{order[i]}')
                         # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
@@ -395,15 +393,14 @@ def worryheart(people, from_json = False):
                 try:
                     # On regarde d'abord s'il y a une PP spéciale pour le PR
                     pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
-                    pp = pp.resize((152, 152))
+                    pp = pp.resize((118, 118))
                     provisoire.append(pp)
                 except FileNotFoundError:
                     try:
                         # Sinon, on tente de prendre la PP normale
                         pp = Image.open(f'{image_path}/{order[i]}.png')
-                        pp = pp.resize((152, 152))
+                        pp = pp.resize((118, 118))
                         provisoire.append(pp)
-                        manquants.append(f'{order[i]}')
                     except FileNotFoundError:
                         manquants.append(f'{order[i]}')
                         # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
@@ -432,15 +429,14 @@ def worryheart(people, from_json = False):
                 try:
                     # On regarde d'abord s'il y a une PP spéciale pour le PR
                     pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
-                    pp = pp.resize((152, 152))
+                    pp = pp.resize((97, 97))
                     provisoire.append(pp)
                 except FileNotFoundError:
                     try:
                         # Sinon, on tente de prendre la PP normale
                         pp = Image.open(f'{image_path}/{order[i]}.png')
-                        pp = pp.resize((152, 152))
+                        pp = pp.resize((97, 97))
                         provisoire.append(pp)
-                        manquants.append(f'{order[i]}')
                     except FileNotFoundError:
                         manquants.append(f'{order[i]}')
                         # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
@@ -469,15 +465,14 @@ def worryheart(people, from_json = False):
                 try:
                     # On regarde d'abord s'il y a une PP spéciale pour le PR
                     pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
-                    pp = pp.resize((152, 152))
+                    pp = pp.resize((97, 97))
                     provisoire.append(pp)
                 except FileNotFoundError:
                     try:
                         # Sinon, on tente de prendre la PP normale
                         pp = Image.open(f'{image_path}/{order[i]}.png')
-                        pp = pp.resize((152, 152))
+                        pp = pp.resize((97, 97))
                         provisoire.append(pp)
-                        manquants.append(f'{order[i]}')
                     except FileNotFoundError:
                         manquants.append(f'{order[i]}')
                         # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
@@ -530,13 +525,13 @@ def worryheart(people, from_json = False):
                 try:
                     # On regarde d'abord s'il y a une PP spéciale pour le PR
                     pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
-                    pp = pp.resize((152, 152))
+                    pp = pp.resize((97, 97))
                     provisoire.append(pp)
                 except FileNotFoundError:
                     try:
                         # Sinon, on tente de prendre la PP normale
                         pp = Image.open(f'{image_path}/{order[i]}.png')
-                        pp = pp.resize((152, 152))
+                        pp = pp.resize((97, 97))
                         provisoire.append(pp)
                         manquants.append(f'{order[i]}')
                     except FileNotFoundError:
@@ -615,6 +610,7 @@ def worryheart(people, from_json = False):
     else:
         print(f"⚠️ PP manquantes : {manquants}")
         print(f"❌ Layout non généré car PP manquante(s), merci de les fournir et de relancer le script")
+        exit()
             
 def nb_columns(people):
     C = []
