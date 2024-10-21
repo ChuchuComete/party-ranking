@@ -41,6 +41,7 @@ if config_error:
 layout = Image.open(f"{pr_path}/images/Layout.png")
 layoutsolo = Image.open(f"{pr_path}/images/LayoutSolo.png")
 layout54 = Image.open(f"{pr_path}/images/Layout54.png")
+layout80 = Image.open(f"{pr_path}/images/Layout80.png")
 police_pseudo = f"{pr_path}/images/agencyfb.ttf"
 save = f"{pr_path}/résultats/layoutPR.png"
 carre = Image.open(f"{pr_path}/images/carre.png")
@@ -52,6 +53,7 @@ police_pseudo2 = f"{pr_path}/images/MusticaPro-SemiBold 600.otf"
 
 draw = ImageDraw.Draw(layout)
 draw54 = ImageDraw.Draw(layout54)
+draw80 = ImageDraw.Draw(layout80)
 avatars = []
 fonta = ImageFont.truetype(police_pseudo, size=32)
 
@@ -96,6 +98,7 @@ def get_data_script(sheet, songs):
 
     titres = sheet[1]
     titres = [titre.value for titre in titres]
+    print(titres)
 
     id_index = titres.index('ID')
     anime_index = titres.index('Anime Name')
@@ -316,37 +319,9 @@ def worryheart(people, from_json = False):
     save_image = True
     if from_json:
         make_order_from_json(people)
+    print(people)
     if people == 1:
-        fontb = ImageFont.truetype(police_pseudo2, size=35) 
-        i=0
-        for j in range(len(C)):
-            provisoire=[]
-            while len(provisoire)!= C[j]:
-                try:
-                    # On regarde d'abord s'il y a une PP spéciale pour le PR
-                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
-                    pp = pp.resize((152, 152))
-                    provisoire.append(pp)
-                except FileNotFoundError:
-                    try:
-                        # Sinon, on tente de prendre la PP normale
-                        pp = Image.open(f'{image_path}/{order[i]}.png')
-                        pp = pp.resize((152, 152))
-                        provisoire.append(pp)
-                    except FileNotFoundError:
-                        manquants.append(f'{order[i]}')
-                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                        provisoire.append(Image.open(f'{image_path}/x.png'))
-                        save_image = False
-                i+=1
-            avatars.append(provisoire)
-        
-        incr = 111
-        for i in range(C[0]):
-            layoutsolo.paste(avatars[0][i], (10,incr))
-            draw.text((86,incr-3),order[i],fill='white', stroke_fill='black', stroke_width=1, font=fontb,anchor="ms")
-            incr += 91+152
-        
+        print(people)        
     elif people <= 8:
         fontb = ImageFont.truetype(police_pseudo2, size=35) 
         i=0
@@ -533,7 +508,6 @@ def worryheart(people, from_json = False):
                         pp = Image.open(f'{image_path}/{order[i]}.png')
                         pp = pp.resize((97, 97))
                         provisoire.append(pp)
-                        manquants.append(f'{order[i]}')
                     except FileNotFoundError:
                         manquants.append(f'{order[i]}')
                         # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
@@ -597,6 +571,192 @@ def worryheart(people, from_json = False):
             incr += 23+97
             incrcar += 120
 
+    elif 55 <= people <= 60:
+        i=0
+        print(C)
+        for j in range(len(C)):
+            provisoire=[]
+            while len(provisoire)!= C[j]:
+                try:
+                    # On regarde d'abord s'il y a une PP spéciale pour le PR
+                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
+                    pp = pp.resize((85, 85))
+                    provisoire.append(pp)
+                except FileNotFoundError:
+                    try:
+                        # Sinon, on tente de prendre la PP normale
+                        pp = Image.open(f'{image_path}/{order[i]}.png')
+                        pp = pp.resize((85, 85))#97
+                        provisoire.append(pp)
+                    except FileNotFoundError:
+                        manquants.append(f'{order[i]}')
+                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                        provisoire.append(Image.open(f'{image_path}/x.png'))
+                        save_image = False
+                i+=1
+            avatars.append(provisoire)
+
+        fontc = ImageFont.truetype(police_pseudo, size=28) #32
+
+        incr = 22 #22
+        incrcar = 57 #70
+        for i in range(C[0]):
+            layout54.paste(avatars[0][i], (19,incr))
+            layout54.paste(carre, (0,incrcar),mask=carre) #0 en x de base
+            draw54.text((68,incr+3),order[i],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            incr += 23+85 #23+97
+            incrcar += 108 #120
+    
+        incr = 22
+        incrcar = 57
+        for i in range(C[1]):
+            layout54.paste(avatars[1][i], (149,incr))
+            layout54.paste(carre, (130,incrcar),mask=carre)
+            draw54.text((198,incr+3),order[i+C[0]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            incr += 23+85
+            incrcar += 108
+    
+
+        incr = 22
+        incrcar = 57
+        for i in range(C[2]):
+            layout54.paste(avatars[2][i], (279,incr))
+            layout54.paste(carre, (260,incrcar),mask=carre)
+            draw54.text((328,incr+3),order[i+C[0]+C[1]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            incr += 23+85
+            incrcar += 108
+    
+        incr = 22
+        incrcar = 57
+        for i in range(C[3]):
+            layout54.paste(avatars[3][i], (1543,incr))
+            layout54.paste(carre, (1525,incrcar),mask=carre)
+            draw54.text((1592,incr+3),order[i+C[0]+C[1]+C[2]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            incr += 23+85
+            incrcar += 108
+
+        incr = 22
+        incrcar = 57
+        for i in range(C[4]):
+            layout54.paste(avatars[4][i], (1673,incr))
+            layout54.paste(carre, (1655,incrcar),mask=carre)
+            draw54.text((1722,incr+3),order[i+C[0]+C[1]+C[2]+C[3]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            incr += 23+85
+            incrcar += 108
+
+        incr = 22
+        incrcar = 57
+        for i in range(C[5]):
+            layout54.paste(avatars[5][i], (1803,incr))
+            layout54.paste(carre, (1785,incrcar),mask=carre)
+            draw54.text((1852,incr+3),order[i+C[0]+C[1]+C[2]+C[3]+C[4]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            incr += 23+85
+            incrcar += 108
+
+    elif 61 <= people <= 80:
+        i=0
+        print(C)
+        for j in range(len(C)):
+            provisoire=[]
+            while len(provisoire)!= C[j]:
+                try:
+                    # On regarde d'abord s'il y a une PP spéciale pour le PR
+                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
+                    pp = pp.resize((85, 85))
+                    provisoire.append(pp)
+                except FileNotFoundError:
+                    try:
+                        # Sinon, on tente de prendre la PP normale
+                        pp = Image.open(f'{image_path}/{order[i]}.png')
+                        pp = pp.resize((85, 85))#97
+                        provisoire.append(pp)
+                    except FileNotFoundError:
+                        manquants.append(f'{order[i]}')
+                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                        provisoire.append(Image.open(f'{image_path}/x.png'))
+                        save_image = False
+                i+=1
+            avatars.append(provisoire)
+
+        fontc = ImageFont.truetype(police_pseudo, size=28) #32
+        incr = 22 #22
+        incrcar = 57 #70
+        for i in range(C[0]):
+            layout80.paste(avatars[0][i], (19,incr))
+            layout80.paste(carre, (0,incrcar),mask=carre) #0 en x de base
+            draw80.text((68,incr+3),order[i],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            incr += 23+85 #23+97
+            incrcar += 108 #120
+    
+        incr = 22
+        incrcar = 57
+        for i in range(C[1]):
+            layout80.paste(avatars[1][i], (129,incr))
+            layout80.paste(carre, (110,incrcar),mask=carre)
+            draw80.text((178,incr+3),order[i+C[0]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            incr += 23+85
+            incrcar += 108
+    
+
+        incr = 22
+        incrcar = 57
+        for i in range(C[2]):
+            layout80.paste(avatars[2][i], (239,incr))
+            layout80.paste(carre, (220,incrcar),mask=carre)
+            draw80.text((288,incr+3),order[i+C[0]+C[1]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            incr += 23+85
+            incrcar += 108
+            
+#4eme colonne
+        incr = 22
+        incrcar = 57
+        for i in range(C[3]):
+            layout80.paste(avatars[3][i], (349,incr))
+            layout80.paste(carre, (330,incrcar),mask=carre)
+            draw80.text((398,incr+3),order[i+C[0]+C[1]+C[2]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            incr += 23+85
+            incrcar += 108
+#5eme colonne
+        incr = 22
+        incrcar = 57
+        for i in range(C[4]):
+            layout80.paste(avatars[4][i], (1493,incr))
+            layout80.paste(carre, (1475,incrcar),mask=carre)
+            draw80.text((1542,incr+3),order[i+C[0]+C[1]+C[2]+C[3]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            incr += 23+85
+            incrcar += 108
+
+#6eme colonne donc 
+        incr = 22
+        incrcar = 57
+        for i in range(C[5]):
+            layout80.paste(avatars[5][i], (1603,incr))
+            layout80.paste(carre, (1585,incrcar),mask=carre)
+            draw80.text((1652,incr+3),order[i+C[0]+C[1]+C[2]+C[3]+C[4]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            incr += 23+85
+            incrcar += 108
+#7eme colonne
+        incr = 22
+        incrcar = 57
+        for i in range(C[6]):
+            layout80.paste(avatars[6][i], (1713,incr))
+            layout80.paste(carre, (1695,incrcar),mask=carre)
+            draw80.text((1762,incr+3),order[i+C[0]+C[1]+C[2]+C[3]+C[4]+C[5]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            incr += 23+85
+            incrcar += 108
+#8eme colonne 
+        incr = 22
+        incrcar = 57
+        for i in range(C[7]):
+            layout80.paste(avatars[7][i], (1823,incr))
+            layout80.paste(carre, (1805,incrcar),mask=carre)
+            draw80.text((1872,incr+3),order[i+C[0]+C[1]+C[2]+C[3]+C[4]+C[5]+C[6]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            incr += 23+85
+            incrcar += 108
+
+    else:
+        print("il n'existe pas de layout adapté")
+
     if save_image and people == 1:
         layoutsolo.save(save)
         print("✅ Layout PR généré !")
@@ -605,6 +765,12 @@ def worryheart(people, from_json = False):
         print("✅ Layout PR généré !")
     elif save_image and 36 <= people <=54:
         layout54.save(save)
+        print("✅ Layout PR généré !")
+    elif save_image and people <=60:
+        layout54.save(save)
+        print("✅ Layout PR généré !")
+    elif save_image and people <= 80:
+        layout80.save(save)
         print("✅ Layout PR généré !")
 
     else:
@@ -648,7 +814,7 @@ def nb_columns(people):
                 C.append(int(people / 4 + 1))
             C.append(int(people / 4))
             return C
-    else:
+    elif people <= 54:
         if people % 6 == 0:
             for i in range(6):
                 C.append(int(people / 6))
@@ -686,7 +852,96 @@ def nb_columns(people):
                 C.append(int(people / 6 + 1))
             C.append(int(people / 6))
             return C
-
+    elif people <= 60:
+        if people % 6 == 0:
+            for i in range(6):
+                C.append(10)
+            return C
+        elif people % 6 == 1:
+            people -= 1
+            C.append(10)
+            for i in range(5):
+                C.append(9)
+            return C
+        elif people % 6 == 2:
+            people -= 2
+            for i in range(2):
+                C.append(10)
+            for i in range(4):
+                C.append(9)
+            return C
+        elif people % 6 == 3:
+            people -= 3
+            for i in range(3):
+                C.append(10)
+            for i in range(3):
+                C.append(9)
+            return C
+        elif people % 6 == 4:
+            people -= 4
+            for i in range(4):
+                C.append(10)
+            for i in range(2):
+                C.append(9)
+            return C
+        elif people % 6 == 5:
+            people -= 5
+            for i in range(5):
+                C.append(10)
+            C.append(9)
+            return C
+    elif people <= 80:
+        if people % 8 == 0:
+            for i in range(8):
+                C.append(int(people / 8))
+            return C
+        elif people % 8 == 1:
+            people -= 1
+            C.append(int(people / 8 + 1))
+            for i in range(7):
+                C.append(int(people / 8))
+            return C
+        elif people % 8 == 2:
+            people -= 2
+            for i in range(2):
+                C.append(int(people / 8 + 1))
+            for i in range(6):
+                C.append(int(people / 8))
+            return C
+        elif people % 8 == 3:
+            people -= 3
+            for i in range(3):
+                C.append(int(people / 8 + 1))
+            for i in range(5):
+                C.append(int(people / 8))
+            return C
+        elif people % 8 == 4:
+            people -= 4
+            for i in range(4):
+                C.append(int(people / 8 + 1))
+            for i in range(4):
+                C.append(int(people / 8))
+            return C
+        elif people % 8 == 5:
+            people -= 5
+            for i in range(5):
+                C.append(int(people / 8 + 1))
+            for i in range(3):
+                C.append(int(people / 8))
+            return C
+        elif people % 8 == 6:
+            people -= 6
+            for i in range(6):
+                C.append(int(people / 8 + 1))
+            for i in range(2):
+                C.append(int(people / 8))
+            return C
+        elif people % 8 == 7:
+            people -= 7
+            for i in range(7):
+                C.append(int(people / 8 + 1))
+            C.append(int(people / 8))
+            return C
 
 def pr_find():
     paths = Path('.').glob('**/*.xlsx')
