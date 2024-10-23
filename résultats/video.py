@@ -285,8 +285,14 @@ def create_layouts(order, songs, output_path):
     elif people <= 54:
         Nono.creationimages54(R, C, Rang, Total, Titre, Musique, output_path)
 
+    elif people <= 60:
+        Nono.creationimages60(R, C, Rang, Total, Titre, Musique, output_path)
 
+    elif people <=72:
+        Nono.creationimages72(R, C, Rang, Total, Titre, Musique, output_path)
 
+    elif people <= 80:
+        Nono.creationimages80(R, C, Rang, Total, Titre, Musique, output_path)
 
 def fuse_parts(parts):
     video_parts = {}
@@ -359,6 +365,7 @@ if __name__ == '__main__':
 
     if not progress['layout']:
         create_layouts(order, songs, temp_path)
+        print("Les layouts ont été créés")
         progress['layout'] = True
         save_progress(progress)
 
@@ -366,7 +373,7 @@ if __name__ == '__main__':
         song_range = progress['range_list'][progress['done']]
         if progress['downloaded'] == progress['done']:
             os.chdir(temp_path)
-            download_songs(songs, song_range)
+            #download_songs(songs, song_range)
             os.chdir(base_path)
             progress['downloaded'] += 1
             save_progress(progress)
