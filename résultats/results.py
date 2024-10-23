@@ -46,6 +46,8 @@ police_pseudo = f"{pr_path}/images/agencyfb.ttf"
 save = f"{pr_path}/résultats/layoutPR.png"
 carre = Image.open(f"{pr_path}/images/carre.png")
 police_pseudo2 = f"{pr_path}/images/MusticaPro-SemiBold 600.otf"
+fontc = ImageFont.truetype(police_pseudo, size=28) #32
+
 
 
 
@@ -596,7 +598,6 @@ def worryheart(people, from_json = False):
                 i+=1
             avatars.append(provisoire)
 
-        fontc = ImageFont.truetype(police_pseudo, size=28) #32
 
         incr = 22 #22
         incrcar = 57 #70
@@ -652,8 +653,123 @@ def worryheart(people, from_json = False):
             draw54.text((1852,incr+3),order[i+C[0]+C[1]+C[2]+C[3]+C[4]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
             incr += 23+85
             incrcar += 108
+    elif 61 <= people <= 72:
+        i=0
+        print(C)
+        for j in range(len(C)):
+            provisoire=[]
+            while len(provisoire)!= C[j]:
+                try:
+                    # On regarde d'abord s'il y a une PP spéciale pour le PR
+                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
+                    pp = pp.resize((97, 97))
+                    provisoire.append(pp)
+                except FileNotFoundError:
+                    try:
+                        # Sinon, on tente de prendre la PP normale
+                        pp = Image.open(f'{image_path}/{order[i]}.png')
+                        pp = pp.resize((97, 97))
+                        provisoire.append(pp)
+                    except FileNotFoundError:
+                        manquants.append(f'{order[i]}')
+                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
+                        provisoire.append(Image.open(f'{image_path}/x.png'))
+                        save_image = False
+                i+=1
+            avatars.append(provisoire)
+#1ere colonne
+        incr = 22 
+        incrcar = 70 
+        for i in range(C[0]):
+            layout80.paste(avatars[0][i], (19,incr))
+            layout80.paste(carre, (0,incrcar),mask=carre) #0 en x de base
+            text = order[i]
+            x = 67
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fonta,anchor="ms") #68
+            incr += 23+97 
+            incrcar += 120 
 
-    elif 61 <= people <= 80:
+#2eme colonne
+        incr = 22 
+        incrcar = 70 
+        for i in range(C[1]):
+            layout80.paste(avatars[1][i], (129,incr))
+            layout80.paste(carre, (115,incrcar),mask=carre)
+            text = order[i+C[0]]
+            x = 177
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fonta,anchor="ms")
+            incr += 23+97 
+            incrcar += 120 
+#3eme colonne
+        incr = 22 
+        incrcar = 70 
+        for i in range(C[2]):
+            layout80.paste(avatars[2][i], (239,incr))
+            layout80.paste(carre, (225,incrcar),mask=carre)
+            text = order[i+C[0]+C[1]]
+            x = 287
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fonta,anchor="ms")
+            incr += 23+97 
+            incrcar += 120 
+            
+#4eme colonne
+        incr = 22 
+        incrcar = 70 
+        for i in range(C[3]):
+            layout80.paste(avatars[3][i], (349,incr))
+            layout80.paste(carre, (335,incrcar),mask=carre)
+            text = order[i+C[0]+C[1]+C[2]]
+            x = 397
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fonta,anchor="ms")
+            incr += 23+97 
+            incrcar += 120 
+#5eme colonne
+        incr = 22 
+        incrcar = 70 
+        for i in range(C[4]):
+            layout80.paste(avatars[4][i], (1493,incr))
+            layout80.paste(carre, (1480,incrcar),mask=carre)
+            text = order[i+C[0]+C[1]+C[2]+C[3]]
+            x = 1541
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fonta,anchor="ms")
+            incr += 23+97 
+            incrcar += 120 
+
+#6eme colonne donc 
+        incr = 22 
+        incrcar = 70 
+        for i in range(C[5]):
+            layout80.paste(avatars[5][i], (1603,incr))
+            layout80.paste(carre, (1590,incrcar),mask=carre)
+            text = order[i+C[0]+C[1]+C[2]+C[3]+C[4]]
+            x = 1651
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fonta,anchor="ms")
+            incr += 23+97 
+            incrcar += 120 
+#7eme colonne
+        incr = 22 
+        incrcar = 70 
+        for i in range(C[6]):
+            layout80.paste(avatars[6][i], (1713,incr))
+            layout80.paste(carre, (1700,incrcar),mask=carre)
+            text = order[i+C[0]+C[1]+C[2]+C[3]+C[4]+C[5]]
+            x = 1761
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fonta,anchor="ms")
+            incr += 23+97 
+            incrcar += 120 
+#8eme colonne 
+        incr = 22 
+        incrcar = 70 
+        for i in range(C[7]):
+            layout80.paste(avatars[7][i], (1823,incr))
+            layout80.paste(carre, (1810,incrcar),mask=carre)
+            text = order[i+C[0]+C[1]+C[2]+C[3]+C[4]+C[5]+C[6]]
+            x = 1871
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fonta,anchor="ms")
+            incr += 23+97 
+            incrcar += 120 
+
+    elif 73 <= people <= 80:
         i=0
         print(C)
         for j in range(len(C)):
@@ -677,33 +793,37 @@ def worryheart(people, from_json = False):
                         save_image = False
                 i+=1
             avatars.append(provisoire)
-
-        fontc = ImageFont.truetype(police_pseudo, size=28) #32
+#1ere colonne
         incr = 22 #22
         incrcar = 57 #70
         for i in range(C[0]):
             layout80.paste(avatars[0][i], (19,incr))
             layout80.paste(carre, (0,incrcar),mask=carre) #0 en x de base
-            draw80.text((68,incr+3),order[i],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            text = order[i]
+            x = 61
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms") #68
             incr += 23+85 #23+97
             incrcar += 108 #120
-    
+#2eme colonne
         incr = 22
         incrcar = 57
         for i in range(C[1]):
             layout80.paste(avatars[1][i], (129,incr))
             layout80.paste(carre, (110,incrcar),mask=carre)
-            draw80.text((178,incr+3),order[i+C[0]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            text = order[i+C[0]]
+            x = 171
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
             incr += 23+85
             incrcar += 108
-    
-
+#3eme colonne
         incr = 22
         incrcar = 57
         for i in range(C[2]):
             layout80.paste(avatars[2][i], (239,incr))
             layout80.paste(carre, (220,incrcar),mask=carre)
-            draw80.text((288,incr+3),order[i+C[0]+C[1]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            text = order[i+C[0]+C[1]]
+            x = 281
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
             incr += 23+85
             incrcar += 108
             
@@ -713,7 +833,9 @@ def worryheart(people, from_json = False):
         for i in range(C[3]):
             layout80.paste(avatars[3][i], (349,incr))
             layout80.paste(carre, (330,incrcar),mask=carre)
-            draw80.text((398,incr+3),order[i+C[0]+C[1]+C[2]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            text = order[i+C[0]+C[1]+C[2]]
+            x = 391
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
             incr += 23+85
             incrcar += 108
 #5eme colonne
@@ -722,7 +844,9 @@ def worryheart(people, from_json = False):
         for i in range(C[4]):
             layout80.paste(avatars[4][i], (1493,incr))
             layout80.paste(carre, (1475,incrcar),mask=carre)
-            draw80.text((1542,incr+3),order[i+C[0]+C[1]+C[2]+C[3]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            text = order[i+C[0]+C[1]+C[2]+C[3]]
+            x = 1535
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
             incr += 23+85
             incrcar += 108
 
@@ -732,7 +856,9 @@ def worryheart(people, from_json = False):
         for i in range(C[5]):
             layout80.paste(avatars[5][i], (1603,incr))
             layout80.paste(carre, (1585,incrcar),mask=carre)
-            draw80.text((1652,incr+3),order[i+C[0]+C[1]+C[2]+C[3]+C[4]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            text = order[i+C[0]+C[1]+C[2]+C[3]+C[4]]
+            x = 1645
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
             incr += 23+85
             incrcar += 108
 #7eme colonne
@@ -741,7 +867,9 @@ def worryheart(people, from_json = False):
         for i in range(C[6]):
             layout80.paste(avatars[6][i], (1713,incr))
             layout80.paste(carre, (1695,incrcar),mask=carre)
-            draw80.text((1762,incr+3),order[i+C[0]+C[1]+C[2]+C[3]+C[4]+C[5]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            text = order[i+C[0]+C[1]+C[2]+C[3]+C[4]+C[5]]
+            x = 1755
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
             incr += 23+85
             incrcar += 108
 #8eme colonne 
@@ -750,7 +878,9 @@ def worryheart(people, from_json = False):
         for i in range(C[7]):
             layout80.paste(avatars[7][i], (1823,incr))
             layout80.paste(carre, (1805,incrcar),mask=carre)
-            draw80.text((1872,incr+3),order[i+C[0]+C[1]+C[2]+C[3]+C[4]+C[5]+C[6]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
+            text = order[i+C[0]+C[1]+C[2]+C[3]+C[4]+C[5]+C[6]]
+            x = 1865
+            draw80.text((x,incr+3),text,fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
             incr += 23+85
             incrcar += 108
 
