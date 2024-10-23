@@ -24,7 +24,7 @@ layoutPR =  f"{pr_path}/résultats/layoutPR.png"
 
 Mustica = 'MusticaPro-SemiBold 600.otf'
 Comfortaa = 'Comfortaa-Regular.ttf'
-njnaruto = 'njnaruto.ttf'
+TNR = 'Montserrat SemiBold 600.ttf'
 
 #Fonctions Entrées Scores
 
@@ -332,13 +332,12 @@ def entreescores18(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
     os.chdir(Chemin)
     return()
 
-
 def entreescores36(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
     c=len(C)
     N=len(L)
     img = PIL.Image.open(layoutPR)
     draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype(njnaruto, size=28) 
+    font = ImageFont.truetype(TNR, size=28) 
     font2= ImageFont.truetype(Mustica, size=65)
     font3= ImageFont.truetype(Comfortaa, size=45)
     font4= ImageFont.truetype(Comfortaa, size=35)
@@ -418,16 +417,18 @@ def entreescores36(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
     os.chdir(Chemin)
     return()
 
+
 def entreescores54(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
     c=len(C)
     N=len(L)
     img = PIL.Image.open(layoutPR)
     draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype(njnaruto, size=28) 
+    font = ImageFont.truetype(TNR, size=28) 
     font2= ImageFont.truetype(Mustica, size=65)
     font3= ImageFont.truetype(Comfortaa, size=45)
     font4= ImageFont.truetype(Comfortaa, size=35)
-    font5= ImageFont.truetype(Comfortaa, size=23)
+    font7= ImageFont.truetype(Comfortaa, size=28)
+    font5= ImageFont.truetype(Comfortaa, size=25)
     m=min(L)
     M=max(L)
     Inc=0
@@ -460,22 +461,28 @@ def entreescores54(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
     if Rang <10:
         draw.text((550,170), str(Rang),fill = 'rgb(255, 255, 255)', font=font2)
     else:
-        draw.text((522,170), str(Rang),fill = 'rgb(255, 255, 255)', font=font2)
+        draw.text((535,170), str(Rang),fill = 'rgb(255, 255, 255)', font=font2)
     if Total<100:
         draw.text((1314,830), str(Total),fill = 'rgb(255, 255, 255)', font=font2)
-    else:
+    elif Total<1000:
         draw.text((1307,830), str(Total),fill = 'rgb(255, 255, 255)', font=font2)
-
+    else:
+        draw.text((1297,830), str(Total),fill = 'rgb(255, 255, 255)', font=font2)
+        
     W1,H1=(1920,10)
     H1b=20
     H1c=30
+    H1d = 25
     
-    if len(Titre)<=33:
+    if len(Titre)<=28:
         w1 = draw.textlength(Titre,font=font3)
         draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=font3)
-    elif len(Titre)<=69:
+    elif len(Titre)<=36:
         w1 = draw.textlength(Titre,font=font4)
         draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=font4)
+    elif len(Titre)<=50:
+        w1 = draw.textlength(Titre,font=font7)
+        draw.text(((W1-w1)/2,H1d), Titre, fill = 'rgb(255, 255, 255)', font=font7)
     else:
         w1 = draw.textlength(Titre,font=font5)
         draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=font5)
@@ -483,13 +490,17 @@ def entreescores54(L,C,E,x1,CL,DL,k,Rang,Total,Titre,Musique, output_path):
 
     W2,H2=(1920,1015)
     H2b=1025
-    H2c=1035
-    if len(Musique)<=33:
+    H2c=1032
+    H2d=1030
+    if len(Musique)<=28:
         w2 = draw.textlength(Musique,font=font3)
         draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=font3)
-    elif len(Musique)<=69:
+    elif len(Musique)<=36:
         w2 = draw.textlength(Musique,font=font4)
         draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=font4)
+    elif len(Musique)<=50:
+        w2 = draw.textlength(Musique,font=font7)
+        draw.text(((W2-w2)/2,H2d), Musique, fill = 'rgb(255, 255, 255)', font=font7)
     else:
         w2  = draw.textlength(Musique,font=font5)
         draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=font5)
@@ -583,7 +594,7 @@ def creationimages54(R,C,Rang,Total,Titre,Musique,output_path):
     x1=83
     y1=5 
     z1=15
-    y2=135 
+    y2=135
     z2=142
     y3=265
     z3=275
@@ -592,10 +603,86 @@ def creationimages54(R,C,Rang,Total,Titre,Musique,output_path):
     y5=1660
     z5=1670
     y6=1790
-    z6=1797 
+    z6=1797
     CL=[y1,y2,y3,y4,y5,y6]
     DL=[z1,z2,z3,z4,z5,z6]
     r=len(R)
     for k in range(r):
         entreescores54(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Titre[k],Musique[k], output_path)
     return()
+
+def creationimages60(R,C,Rang,Total,Titre,Musique,output_path):
+    E=108
+    x1=71
+    y1=7 
+    z1=15
+    y2=137 
+    z2=142
+    y3=267 
+    z3=275
+    y4=1532 
+    z4=1540
+    y5=1662 
+    z5=1670
+    y6=1790 
+    z6=1797
+    CL=[y1,y2,y3,y4,y5,y6]
+    DL=[z1,z2,z3,z4,z5,z6]
+    r=len(R)
+    for k in range(r):
+        entreescores54(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Titre[k],Musique[k], output_path)
+    return()
+
+def creationimages72(R,C,Rang,Total,Titre,Musique,output_path):
+    E=120
+    x1=83
+    y1=5 
+    z1=15
+    y2=120
+    z2=127
+    y3=230 
+    z3=237
+    y4=340
+    z4=347
+    y5=1485
+    z5=1492
+    y6= 1595
+    z6=1602
+    y7=1705
+    z7=1712
+    y8=1815
+    z8=1822
+    CL=[y1,y2,y3,y4,y5,y6,y7,y8]
+    DL=[z1,z2,z3,z4,z5,z6,z7,z8]
+    r=len(R)
+    for k in range(r):
+        entreescores54(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Titre[k],Musique[k], output_path)
+    return()
+
+
+def creationimages80(R,C,Rang,Total,Titre,Musique,output_path):
+    E=108
+    x1=71
+    y1=7 
+    z1=15
+    y2=115 
+    z2=123
+    y3=225 
+    z3=233
+    y4=335
+    z4=343
+    y5=1480
+    z5=1488
+    y6= 1590
+    z6=1598
+    y7=1700
+    z7=1708
+    y8=1810
+    z8=1818
+    CL=[y1,y2,y3,y4,y5,y6,y7,y8]
+    DL=[z1,z2,z3,z4,z5,z6,z7,z8]
+    r=len(R)
+    for k in range(r):
+        entreescores54(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Titre[k],Musique[k], output_path)
+    return()
+
