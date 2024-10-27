@@ -3,9 +3,6 @@ from openpyxl import load_workbook
 from pathlib import Path
 from moviepy.editor import *
 import os
-import shutil
-from pytube import YouTube
-import re
 from ffmpeg_normalize import FFmpegNormalize
 import json
 import argparse
@@ -13,6 +10,7 @@ import configparser
 import requests
 import aiohttp
 import asyncio
+from yt_dlp import YoutubeDL
 
 
 VERSION = "1.01"
@@ -21,8 +19,6 @@ print(f"video.py version {VERSION}")
 transition = 1
 pr = ''
 song_per_part = 45
-# Set this to True to get max resolution on Youtube videos (slower)
-max_resolution = False
 
 config = configparser.ConfigParser()
 config.read('../config.txt')
@@ -104,43 +100,23 @@ def get_results(sheet):
     return songs, order
 
 
-def execute_command(command):
-    os.system(command)
-
-
 def get_extension(link):
     return link.split(".")[-1]
 
 
 def youtube_dl(link, output_name):
-    if (max_resolution):
-        yt = YouTube(link)
+    ydl_opts = {
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+        'outtmpl': f'{output_name}',
+        'merge_output_format': 'mp4',
+        'postprocessors': [{
+            'key': 'FFmpegVideoConvertor',
+            'preferedformat': 'mp4'
+        }]
+    }
 
-        # Download highest resolution video
-        video_stream = yt.streams.filter(file_extension='mp4', only_video=True).order_by('resolution').desc().first()
-        video_path = video_stream.download(filename=f"{output_name}_video.mp4")
-        
-        # Download highest quality audio
-        audio_stream = yt.streams.filter(file_extension='mp4', only_audio=True).order_by('abr').desc().first()
-        audio_path = audio_stream.download(filename=f"{output_name}_audio.mp4")
-        
-        # Merge video and audio
-        video_clip = VideoFileClip(video_path)
-        audio_clip = AudioFileClip(audio_path)
-        
-        final_clip = video_clip.set_audio(audio_clip)
-        final_clip.write_videofile(filename=f"{output_name}", codec='libx264', audio_codec='aac')
-        
-        # Clean up temporary files
-        video_clip.close()
-        audio_clip.close()
-        final_clip.close()
-        os.remove(video_path)
-        os.remove(audio_path)
-    else:
-        YouTube(link).streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first().download(filename=output_name)
-
-
+    with YoutubeDL(ydl_opts) as ydl:
+        ydl.download([link])
 
 async def download_file(session, url, filename):
     async with session.get(url) as response:
@@ -373,7 +349,7 @@ if __name__ == '__main__':
         song_range = progress['range_list'][progress['done']]
         if progress['downloaded'] == progress['done']:
             os.chdir(temp_path)
-            #download_songs(songs, song_range)
+            download_songs(songs, song_range)
             os.chdir(base_path)
             progress['downloaded'] += 1
             save_progress(progress)

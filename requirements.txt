@@ -2,7 +2,7 @@ scipy
 numpy
 openpyxl
 moviepy
-pytube
+yt-dlp
 ffmpeg_normalize
 opencv-python
 discord
