@@ -1,11 +1,12 @@
+import asyncio
+
+import aiohttp
 from results_nomi import nb_columns, create_results_sheet, Song
 from openpyxl import load_workbook
 from pathlib import Path
 from moviepy.editor import *
 import os
-import shutil
-from pytube import YouTube
-import re
+from yt_dlp import YoutubeDL
 from ffmpeg_normalize import FFmpegNormalize
 import json
 import configparser
@@ -14,8 +15,6 @@ import configparser
 transition = 1
 pr = ''
 song_per_part = 40
-# Set this to True to get max resolution on Youtube videos (slower)
-max_resolution = False
 
 
 config = configparser.ConfigParser()
@@ -89,68 +88,46 @@ def get_results(sheet):
     return songs, order
 
 
-def execute_command(command):
-    os.system(command)
-
-
 def get_extension(link):
     return link.split(".")[-1]
 
 
 def youtube_dl(link, output_name):
-    if (max_resolution):
-        yt = YouTube(link)
+    ydl_opts = {
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+        'outtmpl': f'{output_name}',
+        'merge_output_format': 'mp4',
+        'postprocessors': [{
+            'key': 'FFmpegVideoConvertor',
+            'preferedformat': 'mp4'
+        }]
+    }
 
-        # Download highest resolution video
-        video_stream = yt.streams.filter(file_extension='mp4', only_video=True).order_by('resolution').desc().first()
-        video_path = video_stream.download(filename=f"{output_name}_video.mp4")
-        
-        # Download highest quality audio
-        audio_stream = yt.streams.filter(file_extension='mp4', only_audio=True).order_by('abr').desc().first()
-        audio_path = audio_stream.download(filename=f"{output_name}_audio.mp4")
-        
-        # Merge video and audio
-        video_clip = VideoFileClip(video_path)
-        audio_clip = AudioFileClip(audio_path)
-        
-        final_clip = video_clip.set_audio(audio_clip)
-        final_clip.write_videofile(filename=f"{output_name}", codec='libx264', audio_codec='aac')
-        
-        # Clean up temporary files
-        video_clip.close()
-        audio_clip.close()
-        final_clip.close()
-        os.remove(video_path)
-        os.remove(audio_path)
-    else:
-        YouTube(link).streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first().download(filename=output_name)
+    with YoutubeDL(ydl_opts) as ydl:
+        ydl.download([link])
 
+async def download_file(session, url, filename):
+    async with session.get(url) as response:
+        if response.status == 200:
+            with open(filename, 'wb') as file:
+                file.write(await response.read())
+        else:
+            print(f"Failed to download {url}")
+
+async def download_songs_async(songs, song_range):
+    async with aiohttp.ClientSession() as session:
+        tasks = []
+        for i in range(song_range[0], song_range[1]):
+            link = songs[i].link
+            print("Downloading: " + link)
+            if 'catbox' in link or 'animemusicquiz.com' in link:
+                tasks.append(download_file(session, link, f'{i}.{songs[i].extension}'))
+            elif 'youtu' in link:
+                tasks.append(asyncio.to_thread(youtube_dl, link, f'{i}.mp4'))
+        await asyncio.gather(*tasks)
 
 def download_songs(songs, song_range):
-    for i in range(song_range[0], song_range[1]):
-        if os.path.exists(f"{pr_path}/résultats-nomi/temp/{i}.{songs[i].extension}"):
-            print(f"Chanson {i}.{songs[i].extension} trouvée dans le dossier temp, pas besoin de la télécharger !")
-        else:
-            link = songs[i].link
-            print(link)
-            if 'catbox' in link or 'animemusicquiz.com' in link:
-                command = f'ffmpeg -i {link} -c copy {i}.{songs[i].extension}'
-                execute_command(command)
-            elif 'youtu' in link:
-                tries = 0
-                while tries <= 3:
-                    try:
-                        youtube_dl(link, f'{i}.mp4')
-                        tries = 0
-                        break
-                    except:
-                        tries += 1
-                        if tries <= 3:
-                            print(f"Erreur pendant le téléchargement de {link}, essai numéro {tries}...")
-                        else:
-                            exit(f"Erreur pendant le téléchargement de {link} :(")
-
-
+    asyncio.run(download_songs_async(songs, song_range))
 
 
 def get_song(i):

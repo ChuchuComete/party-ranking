@@ -13,7 +13,7 @@ pr_path = config["general"]["pr_path"]
 
 #Données (Ce qu'il y a à modifier):
 
-Chemin = f'{pr_path}/Images'
+Chemin = f'{pr_path}/images'
 os.chdir(Chemin)
 
 Bro=PIL.Image.open('Bronze2.png')
