@@ -6,6 +6,15 @@ Ici, tous les scripts Python et layouts que j'utilise pour monter des PRs
 # Installation
 Cliquer sur le bouton vert "Code", puis Download ZIP.
 
+Pour initier le projet, en fonction de votre système ou du type de terminal vous utilisez, exécuter le fichier:
+- Pour Linux/Mac: `init.sh`
+- Pour Windows CMD: `init.bat`
+- Pour Windows Powershell: `init.ps1`
+
+Cela va créer un nouveau environnement virtuel Python et va créer le fichier `config.txt` lors de la première ouverture.
+
+`init.*` permet aussi d'activer l'environnement pour les prochaines utilisations.
+
 Après il faut modifier le fichier config.txt et ajouter le chemin vers votre dossier PR, et la clé discord comètebot (demandez sur discord).
 
 Enfin, mettre les PP des gens dans le dossier `pr-avatars`.
@@ -13,8 +22,6 @@ Enfin, mettre les PP des gens dans le dossier `pr-avatars`.
 # Prérequis
 Un dossier comprenant le dossier 'Images' (Images.zip contient tout ce qu'il y a dans le dossier Images), le dossier 'Vidéos' et le dossier 'PR Avatar' 
 Le dossier PR Avatar contient les avatars des personnes (à vous même de le faire)
-
-Copier le fichier `config.txt.example` et renomer le en `config.txt` et modifier la configuration
 
 **Pour pouvoir télécharger des sons (utiliser ffmpeg)**: 
 - Télécharger `ffmpeg-5.0.1-full_build.7z`(dispo sur https://www.ffmpeg.org/)
@@ -52,3 +59,25 @@ Sample length (seconds) : correspond à la durée du sample
 Ça correspond au nombre de sons montés avant de diviser la vidéo. (C'est-à-dire que si le nombre de sons dans votre PR est plus grand que le nombre de song_per_part, votre vidéo va se faire en plusieurs fois et vous allez devoir relancer le script entre chaque "bout de vidéo")
 
 Conseil pour video.py: ne pas lancer sur idle
+
+# Advanced setup (for Linux/bash)
+Project initialization:
+```bash
+git clone https://github.com/ChuchuComete/party-ranking.git
+cd party-ranking/
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get install python3 python-is-python3 python3-pip python3-venv ffmpeg
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+Project activation:
+```bash
+source venv/bin/activate
+```
+
+Project deactivation:
+```bash
+deactivate
+```
