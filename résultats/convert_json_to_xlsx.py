@@ -24,7 +24,7 @@ def convert_json_to_excel(args):
     for song in song_list:
         row = {
             'Rank': song['rankPosition'],
-            'Anime': song['anime'],
+            'Source': song['source'],
             'Song Type': song['type'],
             'Song': song['artist'] + ' - ' + song['title'],
             'Score': song['totalRank']
@@ -35,7 +35,6 @@ def convert_json_to_excel(args):
     
     dataframe = pd.DataFrame(rows)
     
-    print("\nScore grid based on the settings you entered, check if it's correct!\n")
     print(dataframe)
     
     # Save DataFrame to Excel with openpyxl
