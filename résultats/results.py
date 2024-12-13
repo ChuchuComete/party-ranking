@@ -4,17 +4,20 @@ from openpyxl.styles import Font, PatternFill
 from openpyxl.styles.colors import Color
 from pathlib import Path
 import re
-import csv
 import pyperclip
-from PIL import Image, ImageDraw, ImageFont,ImageEnhance, ImageFilter,ImageOps
+from PIL import Image, ImageDraw, ImageFont
 import process_PR_stats_ranking as affinity
 from pyexcel_ods3 import save_data
 from pyexcel_xlsx import get_data
 import os
 import configparser
 
-VERSION = "1.01"
+VERSION = "1.1.0"
 print(f"results.py version {VERSION}")
+
+print(f"Operating system: {os.name}")
+regex = r'\\(.*) [(](.*)[)]' if os.name == 'nt' else r'/(.*) \((.*)\)'
+
 # Données
 
 pr = ''  # laisser vide si un seul pr dans le dossier
@@ -212,7 +215,7 @@ def make_order(order, pr):
     if not len(order):
         path_list = pr_paths(Path('.').glob('**/*.xlsx'), pr)
         for path in path_list:
-            pseudo = re.search('\\\\(.*) [(](.*)[)]', str(path)).group(2)
+            pseudo = re.search(regex, str(path)).group(2)
             order.append(pseudo)
 
 
@@ -306,6 +309,28 @@ def create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, outputpat
     result_sheet_name = f'{pr} results.xlsx' if final_sheet else f'{pr} samples.xlsx'
     print(f"✅ {pr} results.xlsx généré !") if final_sheet else print(f"✅ {pr} samples.xlsx généré !")
     result.save(result_sheet_name)
+    
+    
+def fill_avatars(C, order, size):
+    avatars = []
+    i = 0
+    for j in range(len(C)):
+        provisoire = []
+        while len(provisoire) != C[j]:
+            try:
+                # On regarde d'abord s'il y a une PP spéciale pour le PR
+                pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
+                pp = pp.resize((size, size))
+                provisoire.append(pp)
+            except FileNotFoundError:
+                # Sinon, on tente de prendre la PP normale
+                pp = Image.open(f'{image_path}/{order[i]}.png')
+                pp = pp.resize((size, size))
+                provisoire.append(pp)
+            i += 1
+        avatars.append(provisoire)
+    return avatars
+
 
 def worryheart(people, from_json = False):
     # On convertit les jpg en png
@@ -316,38 +341,16 @@ def worryheart(people, from_json = False):
             print(f"Command failed with exit code {exit_code}.")
 
     global LINE1
-    manquants = []
-    # Indique si on a toutes les PP ou non
-    save_image = True
     if from_json:
         make_order_from_json(people)
+        
     print(people)
     if people == 1:
-        print(people)        
+        print(people)   
+             
     elif people <= 8:
         fontb = ImageFont.truetype(police_pseudo2, size=35) 
-        i=0
-        for j in range(len(C)):
-            provisoire=[]
-            while len(provisoire)!= C[j]:
-                try:
-                    # On regarde d'abord s'il y a une PP spéciale pour le PR
-                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
-                    pp = pp.resize((152, 152))
-                    provisoire.append(pp)
-                except FileNotFoundError:
-                    try:
-                        # Sinon, on tente de prendre la PP normale
-                        pp = Image.open(f'{image_path}/{order[i]}.png')
-                        pp = pp.resize((152, 152))
-                        provisoire.append(pp)
-                    except FileNotFoundError:
-                        manquants.append(f'{order[i]}')
-                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                        provisoire.append(Image.open(f'{image_path}/x.png'))
-                        save_image = False
-                i+=1
-            avatars.append(provisoire)
+        avatars = fill_avatars(C, order, 152)
 
         incr = 111
         for i in range(C[0]):
@@ -362,29 +365,7 @@ def worryheart(people, from_json = False):
             incr += 91+152
 
     elif people <= 14:
-        font = ImageFont.truetype(police_pseudo, size=36) 
-        i=0
-        for j in range(len(C)):
-            provisoire=[]
-            while len(provisoire)!= C[j]:
-                try:
-                    # On regarde d'abord s'il y a une PP spéciale pour le PR
-                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
-                    pp = pp.resize((118, 118))
-                    provisoire.append(pp)
-                except FileNotFoundError:
-                    try:
-                        # Sinon, on tente de prendre la PP normale
-                        pp = Image.open(f'{image_path}/{order[i]}.png')
-                        pp = pp.resize((118, 118))
-                        provisoire.append(pp)
-                    except FileNotFoundError:
-                        manquants.append(f'{order[i]}')
-                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                        provisoire.append(Image.open(f'{image_path}/x.png'))
-                        save_image = False
-                i+=1
-            avatars.append(provisoire)
+        avatars = fill_avatars(C, order, 118)
 
         incr = 49
         for i in range(C[0]):
@@ -399,28 +380,7 @@ def worryheart(people, from_json = False):
             incr += 145
  
     elif 15 <= people <= 18:
-        i=0
-        for j in range(len(C)):
-            provisoire=[]
-            while len(provisoire)!= C[j]:
-                try:
-                    # On regarde d'abord s'il y a une PP spéciale pour le PR
-                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
-                    pp = pp.resize((97, 97))
-                    provisoire.append(pp)
-                except FileNotFoundError:
-                    try:
-                        # Sinon, on tente de prendre la PP normale
-                        pp = Image.open(f'{image_path}/{order[i]}.png')
-                        pp = pp.resize((97, 97))
-                        provisoire.append(pp)
-                    except FileNotFoundError:
-                        manquants.append(f'{order[i]}')
-                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                        provisoire.append(Image.open(f'{image_path}/x.png'))
-                        save_image = False
-                i+=1
-            avatars.append(provisoire)
+        avatars = fill_avatars(C, order, 97)
 
         incr = 22
         for i in range(C[0]):
@@ -435,28 +395,7 @@ def worryheart(people, from_json = False):
             incr += 23+97
  
     elif 19 <= people <= 36:
-        i=0
-        for j in range(len(C)):
-            provisoire=[]
-            while len(provisoire)!= C[j]:
-                try:
-                    # On regarde d'abord s'il y a une PP spéciale pour le PR
-                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
-                    pp = pp.resize((97, 97))
-                    provisoire.append(pp)
-                except FileNotFoundError:
-                    try:
-                        # Sinon, on tente de prendre la PP normale
-                        pp = Image.open(f'{image_path}/{order[i]}.png')
-                        pp = pp.resize((97, 97))
-                        provisoire.append(pp)
-                    except FileNotFoundError:
-                        manquants.append(f'{order[i]}')
-                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                        provisoire.append(Image.open(f'{image_path}/x.png'))
-                        save_image = False
-                i+=1
-            avatars.append(provisoire)
+        avatars = fill_avatars(C, order, 97)
 
         incr = 22
         incrcar = 70
@@ -495,28 +434,7 @@ def worryheart(people, from_json = False):
             incrcar += 120
  
     elif 37 <= people <= 54:
-        i=0
-        for j in range(len(C)):
-            provisoire=[]
-            while len(provisoire)!= C[j]:
-                try:
-                    # On regarde d'abord s'il y a une PP spéciale pour le PR
-                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
-                    pp = pp.resize((97, 97))
-                    provisoire.append(pp)
-                except FileNotFoundError:
-                    try:
-                        # Sinon, on tente de prendre la PP normale
-                        pp = Image.open(f'{image_path}/{order[i]}.png')
-                        pp = pp.resize((97, 97))
-                        provisoire.append(pp)
-                    except FileNotFoundError:
-                        manquants.append(f'{order[i]}')
-                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                        provisoire.append(Image.open(f'{image_path}/x.png'))
-                        save_image = False
-                i+=1
-            avatars.append(provisoire)
+        avatars = fill_avatars(C, order, 97)
 
         incr = 22
         incrcar = 70
@@ -574,30 +492,7 @@ def worryheart(people, from_json = False):
             incrcar += 120
 
     elif 55 <= people <= 60:
-        i=0
-        print(C)
-        for j in range(len(C)):
-            provisoire=[]
-            while len(provisoire)!= C[j]:
-                try:
-                    # On regarde d'abord s'il y a une PP spéciale pour le PR
-                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
-                    pp = pp.resize((85, 85))
-                    provisoire.append(pp)
-                except FileNotFoundError:
-                    try:
-                        # Sinon, on tente de prendre la PP normale
-                        pp = Image.open(f'{image_path}/{order[i]}.png')
-                        pp = pp.resize((85, 85))#97
-                        provisoire.append(pp)
-                    except FileNotFoundError:
-                        manquants.append(f'{order[i]}')
-                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                        provisoire.append(Image.open(f'{image_path}/x.png'))
-                        save_image = False
-                i+=1
-            avatars.append(provisoire)
-
+        avatars = fill_avatars(C, order, 85)
 
         incr = 22 #22
         incrcar = 57 #70
@@ -653,30 +548,10 @@ def worryheart(people, from_json = False):
             draw54.text((1852,incr+3),order[i+C[0]+C[1]+C[2]+C[3]+C[4]],fill='white', stroke_fill='black', stroke_width=1, font=fontc,anchor="ms")
             incr += 23+85
             incrcar += 108
+            
     elif 61 <= people <= 72:
-        i=0
-        print(C)
-        for j in range(len(C)):
-            provisoire=[]
-            while len(provisoire)!= C[j]:
-                try:
-                    # On regarde d'abord s'il y a une PP spéciale pour le PR
-                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
-                    pp = pp.resize((97, 97))
-                    provisoire.append(pp)
-                except FileNotFoundError:
-                    try:
-                        # Sinon, on tente de prendre la PP normale
-                        pp = Image.open(f'{image_path}/{order[i]}.png')
-                        pp = pp.resize((97, 97))
-                        provisoire.append(pp)
-                    except FileNotFoundError:
-                        manquants.append(f'{order[i]}')
-                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                        provisoire.append(Image.open(f'{image_path}/x.png'))
-                        save_image = False
-                i+=1
-            avatars.append(provisoire)
+        avatars = fill_avatars(C, order, 97)
+
 #1ere colonne
         incr = 22 
         incrcar = 70 
@@ -770,29 +645,8 @@ def worryheart(people, from_json = False):
             incrcar += 120 
 
     elif 73 <= people <= 80:
-        i=0
-        print(C)
-        for j in range(len(C)):
-            provisoire=[]
-            while len(provisoire)!= C[j]:
-                try:
-                    # On regarde d'abord s'il y a une PP spéciale pour le PR
-                    pp = Image.open(f'{results_path}/{pr}/pr-avatars/{order[i]}.png')
-                    pp = pp.resize((85, 85))
-                    provisoire.append(pp)
-                except FileNotFoundError:
-                    try:
-                        # Sinon, on tente de prendre la PP normale
-                        pp = Image.open(f'{image_path}/{order[i]}.png')
-                        pp = pp.resize((85, 85))#97
-                        provisoire.append(pp)
-                    except FileNotFoundError:
-                        manquants.append(f'{order[i]}')
-                        # On met une image vide à la place pour garder la longueur de provisoire égale à la longueur attendue
-                        provisoire.append(Image.open(f'{image_path}/x.png'))
-                        save_image = False
-                i+=1
-            avatars.append(provisoire)
+        avatars = fill_avatars(C, order, 85)
+        
 #1ere colonne
         incr = 22 #22
         incrcar = 57 #70
@@ -886,26 +740,26 @@ def worryheart(people, from_json = False):
 
     else:
         print("il n'existe pas de layout adapté")
+        exit()
 
-    if save_image and people == 1:
+    if people == 1:
         layoutsolo.save(save)
         print("✅ Layout PR généré !")
-    elif save_image and people <= 36:
+    elif people <= 36:
         layout.save(save)
         print("✅ Layout PR généré !")
-    elif save_image and 36 <= people <=54:
+    elif 36 <= people <=54:
         layout54.save(save)
         print("✅ Layout PR généré !")
-    elif save_image and people <=60:
+    elif people <=60:
         layout54.save(save)
         print("✅ Layout PR généré !")
-    elif save_image and people <= 80:
+    elif people <= 80:
         layout80.save(save)
         print("✅ Layout PR généré !")
 
     else:
-        print(f"⚠️ PP manquantes : {manquants}")
-        print(f"❌ Layout non généré car PP manquante(s), merci de les fournir et de relancer le script")
+        print("❌ Erreur innatendue!")
         exit()
             
 def nb_columns(people):
@@ -1077,7 +931,7 @@ def pr_find():
     paths = Path('.').glob('**/*.xlsx')
     for base_file in paths:
         if '(' in str(base_file):
-            pr_name = re.search('\\\\(.*) [(](.*)[)]', str(base_file)).group(1)
+            pr_name = re.search(regex, str(base_file)).group(1)
             break
     if "pr_name" not in locals():
         exit("❌ Pas de dossier de PR trouvé :(")
@@ -1089,6 +943,15 @@ def get_affinity(outputpath):
     save_data(f'{pr}.ods', data_xlsx)
     affinity.main()
     os.remove(f'{pr}.ods')
+    
+    
+def verify_pfp(order):
+    accepted = True
+    for pseudo in order:
+        if not os.path.exists(f'{image_path}/{pseudo}.png'):
+            accepted = False
+            print(f"❌ Avatar for {pseudo} not found")
+    return accepted
 
 
 white = 'FFFFFF'
@@ -1118,12 +981,16 @@ if __name__ == '__main__':
         pr = pr_find()
 
     make_order(order, pr)
+    
+    if not verify_pfp(order):
+        exit("❌ Missing avatars")
+    
     C = nb_columns(len(order))
     for path in path_list:
         wb = load_workbook(path)
         ws = wb.active
         sheet_name = str(path)
-        pseudo = re.search('\\\\(.*) [(](.*)[)]', sheet_name).group(2)
+        pseudo = re.search(regex, sheet_name).group(2)
 
         if first:
             num_songs = get_data_script(ws, songs)

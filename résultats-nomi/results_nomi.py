@@ -4,17 +4,19 @@ from openpyxl.styles import Font, PatternFill
 from openpyxl.styles.colors import Color
 from pathlib import Path
 import re
-import csv
 import pyperclip
-from PIL import Image, ImageDraw, ImageFont,ImageEnhance, ImageFilter,ImageOps
+from PIL import Image, ImageDraw, ImageFont
 import process_PR_stats_ranking as affinity
 from pyexcel_ods3 import save_data
 from pyexcel_xlsx import get_data
 import os
 import configparser 
 
-VERSION = "1.0"
+VERSION = "1.1.0"
 print(f"results_nomi.py version {VERSION}")
+
+print(f"Operating system: {os.name}")
+regex = r'\\(.*) [(](.*)[)]' if os.name == 'nt' else r'/(.*) \((.*)\)'
 
 # Données
 pr = ''  # laisser vide si un seul pr dans le dossier
@@ -198,12 +200,30 @@ def pr_paths(path_list, pr):
     return [path for path in path_list if pr in str(path) and '(' in str(path)]
 
 
+def make_order_from_json(people_list):
+    for pseudo in people_list:
+        order.append(pseudo)
+        global C
+        C = nb_columns(people_list)
+
+
 def make_order(order, pr):
     if not len(order):
         path_list = pr_paths(Path('.').glob('**/*.xlsx'), pr)
         for path in path_list:
-            pseudo = re.search('\\\\(.*) [(](.*)[)]', str(path)).group(2)
+            pseudo = re.search(regex, str(path)).group(2)
             order.append(pseudo)
+            
+        order.sort()
+            
+            
+def verify_pfp(order):
+    accepted = True
+    for pseudo in order:
+        if not os.path.exists(f'{image_path}/{pseudo}.png'):
+            accepted = False
+            print(f"❌ Avatar for {pseudo} not found")
+    return accepted
 
 
 def fill_values(sheet, order, song_list, final_sheet, scoring_pr):
@@ -296,6 +316,20 @@ def create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, outputpat
     sheet.auto_filter.ref = sheet.dimensions
     result_sheet_name = f'{pr} results.xlsx' if final_sheet else f'{pr} samples.xlsx'
     result.save(result_sheet_name)
+    
+
+def fill_avatars(C, order, size):
+    i = 0
+    for j in range(len(C)):
+        provisoire = []
+        while len(provisoire) != C[j]:
+            pp = Image.open(f'{image_path}/{order[i]}.png')
+            pp = pp.resize((size, size))
+            provisoire.append(pp)
+            i += 1
+        avatars.append(provisoire)
+        
+    return avatars
 
     
 def worryheart(people):
@@ -307,24 +341,10 @@ def worryheart(people):
             print(f"Command failed with exit code {exit_code}.")
 
     global LINE1
-    manquants = []
-    save_image = True
     if people <= 8:
         layout.paste(cadrenom, mask = cadrenom)
-        fontb = ImageFont.truetype(police_pseudo2, size=35) 
-        i=0
-        for j in range(len(C)):
-            provisoire=[]
-            while len(provisoire)!= C[j]:
-                try:
-                    pp = Image.open(f'{image_path}/{order[i]}.png')
-                    pp = pp.resize((152, 152))
-                    provisoire.append(pp)
-                except FileNotFoundError:
-                    manquants.append(f'order[i]')
-                    save_image = False
-                i+=1
-            avatars.append(provisoire)
+        fontb = ImageFont.truetype(police_pseudo2, size=35)
+        avatars = fill_avatars(C, order, 152)
 
         incr = 111
         for i in range(C[0]):
@@ -340,20 +360,7 @@ def worryheart(people):
 
     elif people <= 14:
         layout.paste(cadrenom, mask = cadrenom)
-        font = ImageFont.truetype(police_pseudo, size=36) 
-        i=0
-        for j in range(len(C)):
-            provisoire=[]
-            while len(provisoire)!= C[j]:
-                try:
-                    pp = Image.open(f'{image_path}/{order[i]}.png')
-                    pp = pp.resize((118, 118))
-                    provisoire.append(pp)
-                except FileNotFoundError:
-                    manquants.append(f'order[i]')
-                    save_image = False
-                i+=1
-            avatars.append(provisoire)
+        avatars = fill_avatars(C, order, 118)
 
         incr = 49
         for i in range(C[0]):
@@ -369,19 +376,7 @@ def worryheart(people):
  
     elif 15 <= people <= 18:
         layout.paste(cadrenom, mask = cadrenom)
-        i=0
-        for j in range(len(C)):
-            provisoire=[]
-            while len(provisoire)!= C[j]:
-                try:
-                    pp = Image.open(f'{image_path}/{order[i]}.png')
-                    pp = pp.resize((97, 97))
-                    provisoire.append(pp)
-                except FileNotFoundError:
-                    manquants.append(f'order[i]')
-                    save_image = False
-                i+=1
-            avatars.append(provisoire)
+        avatars = fill_avatars(C, order, 97)
 
         incr = 22
         for i in range(C[0]):
@@ -397,21 +392,7 @@ def worryheart(people):
  
     elif 19 <= people <= 36:
         layout.paste(cadrenom, mask = cadrenom)
-        i=0
-        for j in range(len(C)):
-            provisoire=[]
-            while len(provisoire)!= C[j]:
-                try:
-                    print(f'{image_path}/{order[i]}.png')
-                    pp = Image.open(f'{image_path}/{order[i]}.png')
-                    pp = pp.resize((97, 97))
-                    provisoire.append(pp)
-                    print(len(provisoire))
-                except FileNotFoundError:
-                    manquants.append(f'order[i]')
-                    save_image = False
-                i+=1
-            avatars.append(provisoire)
+        avatars = fill_avatars(C, order, 97)
 
         incr = 22
         incrcar = 70
@@ -451,21 +432,7 @@ def worryheart(people):
             
     elif 37 <= people <= 54:
         layout54.paste(cadrenom54, mask = cadrenom54)
-        i=0
-        for j in range(len(C)):
-            provisoire=[]
-            while len(provisoire)!= C[j]:
-                try:
-                    print(f'{image_path}/{order[i]}.png')
-                    pp = Image.open(f'{image_path}/{order[i]}.png')
-                    pp = pp.resize((97, 97))
-                    provisoire.append(pp)
-                    print(len(provisoire))
-                except FileNotFoundError:
-                    manquants.append(f'order[i]')
-                    save_image = False
-                i+=1
-            avatars.append(provisoire)
+        avatars = fill_avatars(C, order, 97)
 
         incr = 22
         incrcar = 70
@@ -485,7 +452,6 @@ def worryheart(people):
             incr += 23+97
             incrcar += 120
     
-
         incr = 22
         incrcar = 70
         for i in range(C[2]):
@@ -523,16 +489,15 @@ def worryheart(people):
             incrcar += 120
 
         
-    if save_image and people <= 36:
+    if people <= 36:
         layout.save(save)
         layout.save(save_verify)
-    elif save_image and 36 <= people <=54:
+    elif 36 <= people <=54:
         layout54.save(save)
         layout54.save(save_verify)
 
     else:
-        with open('pdp manquantes.txt', 'w') as file:
-            file.write(manquants)
+        exit("❌ Trop de participants")
             
 def nb_columns(order):
     C = []
@@ -615,7 +580,7 @@ def pr_find():
     paths = Path('.').glob('**/*.xlsx')
     for base_file in paths:
         if '(' in str(base_file):
-            pr_name = re.search('\\\\(.*) [(](.*)[)]', str(base_file)).group(1)
+            pr_name = re.search(regex, str(base_file)).group(1)
             break
     if "pr_name" not in locals():
         exit("❌ Pas de dossier de PR trouvé :(")
@@ -657,12 +622,16 @@ if __name__ == '__main__':
         pr = pr_find()
 
     make_order(order, pr)
+    
+    if not verify_pfp(order):
+        exit("❌ Missing avatars")
+        
     C = nb_columns(order)
     for path in path_list:
         wb = load_workbook(path)
         ws = wb.active
         sheet_name = str(path)
-        pseudo = re.search('\\\\(.*) [(](.*)[)]', sheet_name).group(2)
+        pseudo = re.search(regex, sheet_name).group(2)
 
         if first:
             num_songs = get_data_script(ws, songs)
@@ -685,7 +654,6 @@ if __name__ == '__main__':
     print(len(order))
     print(order)
     worryheart(len(order))
-
     
     try:
         base_path = os.getcwd()

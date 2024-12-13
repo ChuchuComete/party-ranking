@@ -29,7 +29,7 @@ def clean():
         os.remove('layoutPR.png')
         
     if 'LayoutPR.png' in os.listdir():
-        os.remove('LayoutPR.png')
+        os.remove('LayoutPR.png')    
         
     if 'progress.json' in os.listdir():
         os.remove('progress.json')

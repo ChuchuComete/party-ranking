@@ -1,10 +1,9 @@
 import PIL
-from PIL import Image, ImageDraw, ImageFont,ImageEnhance, ImageFilter,ImageOps
+from PIL import ImageDraw, ImageFont
 import os
-import numpy as np
 import configparser
 
-VERSION = "1.0"
+VERSION = "1.1.0"
 print(f"ScriptPRNomi.py version {VERSION}")
 
 config = configparser.ConfigParser()

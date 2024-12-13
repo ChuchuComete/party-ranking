@@ -1,7 +1,8 @@
+import argparse
 import asyncio
-
 import aiohttp
-from results_nomi import nb_columns, create_results_sheet, Song
+import requests
+from results_nomi import make_order_from_json, nb_columns, create_results_sheet, Song, worryheart
 from openpyxl import load_workbook
 from pathlib import Path
 from moviepy.editor import *
@@ -11,15 +12,19 @@ from ffmpeg_normalize import FFmpegNormalize
 import json
 import configparser
 
+VERSION = "1.1.0"
+print(f"video_nomi.py version {VERSION}")
 
 transition = 1
 pr = ''
 song_per_part = 40
+reverse = False
 
 
 config = configparser.ConfigParser()
 config.read('../config.txt')
 pr_path = config["general"]["pr_path"]
+image_path = f'{pr_path}/pr-avatars'
 
 
 class SampledSong(Song):
@@ -265,16 +270,73 @@ def fuse_parts(parts):
     pr_video.write_videofile(f'{pr}.mp4', threads=4)
 
 
+def download_json_profile_pic(user):
+    print(f"Téléchargement de la PP de {user['name']}...")
+    response = requests.get(user['image'])
+    if response.status_code == 200:
+        with open(f"{image_path}/{user['name']}.png", 'wb') as file:
+            file.write(response.content)
+        print(f"PP de {user['name']} téléchargée !")
+    else:
+        print(f"Failed to retrieve PP. Status code: {response.status_code}")
+    
+
+def process_json(path):
+    with open(path, 'r', encoding='utf-8') as json_file:
+        data = json.load(json_file)
+        songs = {}
+        last_order = []
+        global pr
+        pr = data["name"]
+        accepted = True
+        for user in data["voters"]:
+            download_json_profile_pic(user)
+            if not os.path.exists(f"{image_path}/{user['name']}.png"):
+                print(f"❌ PP de {user['name']} non trouvée !")
+                accepted = False
+        if not accepted:
+            exit("❌ Une ou plusieurs PP n'ont pas été trouvées !")
+            
+        data["songList"] = sorted(data["songList"], key=lambda x: x["rankPosition"], reverse=reverse)
+        for i in range(0, len(data["songList"])):
+            current_song = data["songList"][i]
+            ranks = [vote["rank"] for vote in current_song["voters"]]
+            order = [vote["name"] for vote in current_song["voters"]]
+            last_order = order
+            songs[i+1] = SampledSong(current_song['nominator'], current_song['source'] if current_song['source'] != '' and current_song['source'] is not None else '', f"- {current_song['type']}" if current_song['source'] != '' and current_song['source'] is not None else f"{current_song['type']}", f"{current_song['artist']} - {current_song['title']}", current_song['urlVideo'], current_song['totalRank'], current_song['startSample'], current_song['sampleLength'], ranks, order)
+    return songs, last_order
+
+
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--json', type=str, required=False, help="JSON file path")
+    parser.add_argument('--song_per_part', type=int, required=False, help="Number of songs per part")
+    parser.add_argument('--reverse', help="Reverse order for rank (only available for JSON)", action='store_true')
+    args = parser.parse_args()
+    
+    if args.help:
+        parser.print_help()
+        exit(0)
+    
     scoring_pr = False
     base_path = os.getcwd()
     Path('temp').mkdir(parents=True, exist_ok=True)
     temp_path = os.path.join(base_path, 'temp')
 
-    result_sheet = get_result_sheet()
-    ws = result_sheet.active
+    if args.reverse:
+        reverse = True
+    if args.song_per_part:
+        song_per_part = args.song_per_part
 
-    songs, order = get_results(ws)
+    if args.json is not None:
+        songs, order = process_json(args.json)
+        make_order_from_json(order)
+        worryheart(len(order))
+    else:
+        result_sheet = get_result_sheet()
+        ws = result_sheet.active
+
+        songs, order = get_results(ws)
 
     parts = len(songs) // song_per_part if not len(songs) % song_per_part else len(songs) // song_per_part + 1
     range_list = split(len(songs), parts)
