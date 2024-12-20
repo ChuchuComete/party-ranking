@@ -2,7 +2,7 @@ import argparse
 import asyncio
 import aiohttp
 import requests
-from results_nomi import make_order_from_json, nb_columns, create_results_sheet, Song, worryheart
+from results_nomi import make_order_from_json, nb_columns, Song, worryheart
 from openpyxl import load_workbook
 from pathlib import Path
 from moviepy.editor import *
@@ -12,14 +12,16 @@ from ffmpeg_normalize import FFmpegNormalize
 import json
 import configparser
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 print(f"video_nomi.py version {VERSION}")
 
-transition = 1
 pr = ''
-song_per_part = 40
-reverse = False
+cdn = ['catbox', 'animemusicquiz.com', 'prlive-static.frederic94500.net']
 
+transition = 1
+song_per_part = 45
+reverse = False
+threads = 4
 
 config = configparser.ConfigParser()
 config.read('../config.txt')
@@ -125,7 +127,7 @@ async def download_songs_async(songs, song_range):
         for i in range(song_range[0], song_range[1]):
             link = songs[i].link
             print("Downloading: " + link)
-            if 'catbox' in link or 'animemusicquiz.com' in link:
+            if any([domain in link for domain in cdn]):
                 tasks.append(download_file(session, link, f'{i}.{songs[i].extension}'))
             elif 'youtu' in link:
                 tasks.append(asyncio.to_thread(youtube_dl, link, f'{i}.mp4'))
@@ -136,6 +138,7 @@ def download_songs(songs, song_range):
 
 
 def get_song(i):
+    print(songs[i].info)
     clip = VideoFileClip(f'temp/{i}.{songs[i].extension}')
 
     if not check_sample(clip, songs[i]):
@@ -172,7 +175,7 @@ def create_video(song_range, output_path):
         pr_part = CompositeVideoClip([black, video, video_layout])
     else:
         pr_part = CompositeVideoClip([video, video_layout])
-    pr_part.write_videofile(output_path, threads=4)
+    pr_part.write_videofile(output_path, threads=threads)
 
 def check_sample(clip: VideoFileClip, song: SampledSong):
     if song is songs[1]:
@@ -310,42 +313,49 @@ def process_json(path):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--json', type=str, required=False, help="JSON file path")
-    parser.add_argument('--song_per_part', type=int, required=False, help="Number of songs per part")
+    parser.add_argument('--song-per-part', type=int, required=False, help="Number of songs per part")
     parser.add_argument('--reverse', help="Reverse order for rank (only available for JSON)", action='store_true')
+    parser.add_argument('--skip-layout', help="Skip layout creation", action='store_true')
+    parser.add_argument('--threads', type=int, required=False, help="Number of threads to use for video creation")
+    parser.add_argument('--transition', type=int, required=False, help="Transition duration in seconds")
     args = parser.parse_args()
-    
-    if args.help:
-        parser.print_help()
-        exit(0)
     
     scoring_pr = False
     base_path = os.getcwd()
     Path('temp').mkdir(parents=True, exist_ok=True)
     temp_path = os.path.join(base_path, 'temp')
 
-    if args.reverse:
-        reverse = True
     if args.song_per_part:
         song_per_part = args.song_per_part
+    if args.reverse:
+        reverse = True
+    if args.threads:
+        threads = args.threads
+    if args.transition:
+        transition = args.transition
 
     if args.json is not None:
         songs, order = process_json(args.json)
         make_order_from_json(order)
-        worryheart(len(order))
-    else:
+        if not args.skip_layout:
+            worryheart(len(order))
+    else :
         result_sheet = get_result_sheet()
         ws = result_sheet.active
-
         songs, order = get_results(ws)
 
     parts = len(songs) // song_per_part if not len(songs) % song_per_part else len(songs) // song_per_part + 1
     range_list = split(len(songs), parts)
     progress = get_progress(parts, range_list)
-
     pr_range = range(1, len(songs) + 1)
 
-    if not progress['layout']:
+    if not progress['layout'] and not args.skip_layout:
         create_layouts(order, songs, temp_path)
+        print("Les layouts ont été créés")
+        progress['layout'] = True
+        save_progress(progress)
+    else:
+        print("Les layouts ont déjà été créés/injectés")
         progress['layout'] = True
         save_progress(progress)
 
