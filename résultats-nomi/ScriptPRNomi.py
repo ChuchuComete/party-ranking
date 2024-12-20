@@ -3,7 +3,7 @@ from PIL import ImageDraw, ImageFont
 import os
 import configparser
 
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 print(f"ScriptPRNomi.py version {VERSION}")
 
 config = configparser.ConfigParser()
@@ -675,7 +675,8 @@ def verif_picker(dico):
     for elem in dico:
         if dico[elem] == False:
             liste.append(elem)
-    print(f"❌ Utilisateurs qui posent problème : {', '.join(map(str, liste))}")
+    if len(liste) != 0:
+        print(f"❌ Utilisateurs qui posent problème : {', '.join(map(str, liste))}")
     
 
 def creationimages8(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
