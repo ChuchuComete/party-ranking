@@ -20,7 +20,11 @@ def clean():
     
     for file in os.listdir():
         if file.endswith('.mp4'):
-            os.remove(file)      
+            os.remove(file)
+    
+    for file in os.listdir():
+        if file.endswith('.wav'):
+            os.remove(file)
     
     if 'temp' in os.listdir():
         shutil.rmtree('temp')

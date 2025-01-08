@@ -1,3 +1,4 @@
+import traceback
 from results import nb_columns, make_order_from_json, Song, worryheart
 from openpyxl import load_workbook
 from pathlib import Path
@@ -12,8 +13,10 @@ import aiohttp
 import asyncio
 from yt_dlp import YoutubeDL
 
+from new_video_editing import new_video_editing
 
-VERSION = "1.2.0"
+
+VERSION = "2.0.0"
 print(f"video.py version {VERSION}")
 
 pr = ''
@@ -123,12 +126,15 @@ def youtube_dl(link, output_name):
         ydl.download([link])
 
 async def download_file(session, url, filename):
-    async with session.get(url) as response:
-        if response.status == 200:
-            with open(filename, 'wb') as file:
-                file.write(await response.read())
-        else:
-            print(f"Failed to download {url}")
+    try:
+        async with session.get(url) as response:
+            if response.status == 200:
+                with open(filename, 'wb') as file:
+                    file.write(await response.read())
+            else:
+                print(f"Failed to download {url}")
+    except Exception as e:
+        print(f"Failed to download {url}: {e}")
 
 async def download_songs_async(songs, song_range):
     async with aiohttp.ClientSession() as session:
@@ -318,7 +324,7 @@ def process_json(path):
         if not accepted:
             exit("❌ Une ou plusieurs PP n'ont pas été trouvées !")
             
-        data["songList"] = sorted(data["songList"], key=lambda x: x["rankPosition"], reverse=reverse)
+        data["songList"] = sorted(data["songList"], key=lambda x: (x["rankPosition"], x["tiebreak"]), reverse=reverse)
         for i in range(0, len(data["songList"])):
             current_song = data["songList"][i]
             ranks = [vote["rank"] for vote in current_song["voters"]]
@@ -329,18 +335,29 @@ def process_json(path):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--json', type=str, required=False, help="JSON file path")
-    parser.add_argument('--song-per-part', type=int, required=False, help="Number of songs per part")
+    parser.add_argument('--json', type=str, help="JSON file path")
+    parser.add_argument('--song-per-part', type=int, help="Number of songs per part")
     parser.add_argument('--reverse', help="Reverse order for rank (only available for JSON)", action='store_true')
     parser.add_argument('--skip-layout', help="Skip layout creation", action='store_true')
-    parser.add_argument('--threads', type=int, required=False, help="Number of threads to use for video creation")
-    parser.add_argument('--transition', type=int, required=False, help="Transition duration in seconds")
+    parser.add_argument('--threads', type=int, help="Number of threads to use for video creation")
+    parser.add_argument('--transition', type=float, help="Transition duration in seconds")
+    parser.add_argument('--new-video-editing', help="Use new video editing method", action='store_true')
+    parser.add_argument("--gpu", help="Use GPU for video (only on new video editing)(WARNING: larger file!)", action="store_true")
+    parser.add_argument("--skip-preprocessing", help="Skip preprocessing video (only on new video editing)", action="store_true")
+    parser.add_argument("--skip-video-concatenation", help="Skip video concatenation (only on new video editing)", action="store_true")
+    parser.add_argument("--skip-audio-concatenation", help="Skip audio concatenation (only on new video editing)", action="store_true")
+    parser.add_argument("--cpu-final", help="Use CPU for final video (only on new video editing)", action="store_true")
+    parser.add_argument("--webm", help="Use webm format for final video (only on new video editing)", action="store_true")
+    parser.add_argument("--fhd", help="Use 1080p resolution for video (only on new video editing)", action="store_true")
+    parser.add_argument("--use-local-binary-folder", type=str, help="Use FFmpeg local binary folder (only on new video editing)")
+    parser.add_argument("--verbose", help="Verbose mode", action="store_true")
     args = parser.parse_args()
 
     scoring_pr = False
     base_path = os.getcwd()
     Path('temp').mkdir(parents=True, exist_ok=True)
     temp_path = os.path.join(base_path, 'temp')
+    local_binary_folder = ""
     
     if args.song_per_part:
         song_per_part = args.song_per_part
@@ -350,6 +367,8 @@ if __name__ == '__main__':
         threads = args.threads
     if args.transition:
         transition = args.transition
+    if args.use_local_binary_folder:
+        local_binary_folder = args.use_local_binary_folder
 
     if args.json is not None:
         songs, order = process_json(args.json)
@@ -375,6 +394,18 @@ if __name__ == '__main__':
         print("Les layouts ont déjà été créés/injectés")
         progress['layout'] = True
         save_progress(progress)
+        
+    if args.new_video_editing:
+        songs_list = list(songs.values())
+        songs_list = sorted(songs_list, key=lambda x: x.final_score, reverse=reverse)
+        try:
+            new_video_editing(pr, songs_list, threads, args.gpu, args.skip_preprocessing, args.skip_video_concatenation, args.skip_audio_concatenation, args.cpu_final, args.webm, args.fhd, local_binary_folder, verbose=args.verbose)
+        except Exception as e:
+            print(f"❌ Erreur lors de la création de la vidéo: {e}")
+            traceback.print_exc()
+            exit(1)
+        print("✅ Fin du montage video")
+        exit(0)
 
     while progress['done'] < progress['parts']:
         song_range = progress['range_list'][progress['done']]
