@@ -1,9 +1,10 @@
 import PIL
-from PIL import ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont,ImageEnhance, ImageFilter,ImageOps
 import os
+import numpy as np
 import configparser
 
-VERSION = "1.1.1"
+VERSION = "1.0"
 print(f"ScriptPRNomi.py version {VERSION}")
 
 config = configparser.ConfigParser()
@@ -19,7 +20,7 @@ Bro=PIL.Image.open('Bronze2.png')
 Arg=PIL.Image.open('Argent2.png')
 Or=PIL.Image.open('Or2.png')
 
-LayoutPR =  f"{pr_path}/résultats-nomi/LayoutPR.png"
+LayoutPR =  f"{pr_path}/résultats/layoutPR.png"
 
 #Polices
 
@@ -27,7 +28,17 @@ Mustica = 'MusticaPro-SemiBold 600.otf'
 Comfortaa = 'Comfortaa-Regular.ttf'
 njnaruto = 'njnaruto.ttf'
 arlrdbd = 'arlrdbd.ttf'
-arialunicode = 'arial-unicode-ms.ttf'
+
+#Utile
+
+def average(R):
+    L_Average = []
+    for i in range(len(R)):
+        Somme = 0
+        for j in range(len(R[i])):
+            Somme += R[i][j]
+        L_Average.append(Somme/len(R[i]))
+    return L_Average
 
 def entreescores8(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, output_path):
     c=len(C)
@@ -36,13 +47,9 @@ def entreescores8(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, output
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(Mustica, size=60) 
     font2= ImageFont.truetype(Mustica, size=65)
-    fontunicode3= ImageFont.truetype(Comfortaa, size=45)
-    fontunicode4= ImageFont.truetype(Comfortaa, size=35)
-    fontunicode5= ImageFont.truetype(Comfortaa, size=23)
-    fontunicode2 = ImageFont.truetype(arialunicode, size=65)
-    fontunicode3 = ImageFont.truetype(arialunicode, size=45)
-    fontunicode4 = ImageFont.truetype(arialunicode, size=35)
-    fontunicode5 = ImageFont.truetype(arialunicode, size=23)
+    font3= ImageFont.truetype(Comfortaa, size=45)
+    font4= ImageFont.truetype(Comfortaa, size=35)
+    font5= ImageFont.truetype(Comfortaa, size=23)
     fontpick = ImageFont.truetype(arlrdbd, size = 40)
     L2=L.copy()
     L2.remove(L2[Nomi-1])
@@ -58,55 +65,37 @@ def entreescores8(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, output
                 if Inc+j==Nomi-1:
                     if L[Inc+j]<10:
                         draw.text((Y+25,X), str(L[Inc+j]),fill = 'rgb(0, 255, 255)', font=font)
-                        if L[Inc+j]==1:
-                            img.paste(Or,(Z-240,X-60),Or)
-                        elif L[Inc+j]==2:
-                            img.paste(Arg,(Z-240,X-60),Arg)
-                        elif L[Inc+j]==3:
-                            img.paste(Bro,(Z-240,X-60),Bro)
                     else:
                         draw.text((Y+25,X), str(L[Inc+j]),fill = 'rgb(0, 255, 255)', font=font)
                 else:
                     if L[Inc+j]<10:
                         if L[Inc+j] == m:
-                            draw.text((Y+25,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                        elif L[Inc+j] == M:
                             draw.text((Y+25,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                        elif L[Inc+j] == M:
+                            draw.text((Y+25,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                         else:
                             draw.text((Y+25,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
-                        if L[Inc+j]==1:
-                            img.paste(Or,(Z-240,X-60),Or)
-                        elif L[Inc+j]==2:
-                            img.paste(Arg,(Z-240,X-60),Arg)
-                        elif L[Inc+j]==3:
-                            img.paste(Bro,(Z-240,X-60),Bro)
                     else:
                         if L[Inc+j] == m:
-                            draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                        elif L[Inc+j] == M:
                             draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                        elif L[Inc+j] == M:
+                            draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                         else:
                             draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
 
             else:
                 if L[Inc+j]<10:
                     if L[Inc+j] == m:
-                        draw.text((Y+25,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                    elif L[Inc+j] == M:
                         draw.text((Y+25,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                    elif L[Inc+j] == M:
+                        draw.text((Y+25,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                     else:
                         draw.text((Y+25,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
-                    if L[Inc+j]==1:
-                        img.paste(Or,(Z-240,X-60),Or) #80
-                    elif L[Inc+j]==2:
-                        img.paste(Arg,(Z-240,X-60),Arg)
-                    elif L[Inc+j]==3:
-                        img.paste(Bro,(Z-240,X-60),Bro)
                 else:
                     if L[Inc+j] == m:
-                        draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                    elif L[Inc+j] == M:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                    elif L[Inc+j] == M:
+                        draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                     else:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
         Inc=Inc+C[i]
@@ -127,28 +116,28 @@ def entreescores8(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, output
     H1c=40
     
     if len(Titre)<=33:
-        w1 = draw.textlength(Titre,font=fontunicode3)
-        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode3)
+        w1 = draw.textlength(Titre,font=font3)
+        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=font3)
     elif len(Titre)<=69:
-        w1 = draw.textlength(Titre,font=fontunicode4)
-        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode4)
+        w1 = draw.textlength(Titre,font=font4)
+        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=font4)
     else:
-        w1 = draw.textlength(Titre,font=fontunicode5)
-        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode5)
+        w1 = draw.textlength(Titre,font=font5)
+        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=font5)
 
 
     W2,H2=(1920,1000)
     H2b=1010
     H2c=1020
     if len(Musique)<=33:
-        w2 = draw.textlength(Musique,font=fontunicode3)
-        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode3)
+        w2 = draw.textlength(Musique,font=font3)
+        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=font3)
     elif len(Musique)<=69:
-        w2 = draw.textlength(Musique,font=fontunicode4)
-        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode4)
+        w2 = draw.textlength(Musique,font=font4)
+        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=font4)
     else:
-        w2  = draw.textlength(Musique,font=fontunicode5)
-        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode5)
+        w2  = draw.textlength(Musique,font=font5)
+        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=font5)
 
     draw.text((420,942), Picker, fill = 'rgb(255, 255, 255)', font=fontpick)
 
@@ -165,13 +154,9 @@ def entreescores14(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(Mustica, size=60) 
     font2= ImageFont.truetype(Mustica, size=65)
-    fontunicode3= ImageFont.truetype(Comfortaa, size=45)
-    fontunicode4= ImageFont.truetype(Comfortaa, size=35)
-    fontunicode5= ImageFont.truetype(Comfortaa, size=23)
-    fontunicode2 = ImageFont.truetype(arialunicode, size=65)
-    fontunicode3 = ImageFont.truetype(arialunicode, size=45)
-    fontunicode4 = ImageFont.truetype(arialunicode, size=35)
-    fontunicode5 = ImageFont.truetype(arialunicode, size=23)
+    font3= ImageFont.truetype(Comfortaa, size=45)
+    font4= ImageFont.truetype(Comfortaa, size=35)
+    font5= ImageFont.truetype(Comfortaa, size=23)
     fontpick = ImageFont.truetype(arlrdbd, size = 40)
     L2=L.copy()
     L2.remove(L2[Nomi-1])
@@ -187,54 +172,36 @@ def entreescores14(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
                 if Inc+j==Nomi-1:
                     if L[Inc+j]<10:
                         draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 255)', font=font)
-                        if L[Inc+j]==1:
-                            img.paste(Or,(Z-190,X-25),Or)
-                        elif L[Inc+j]==2:
-                            img.paste(Arg,(Z-190,X-25),Arg)
-                        elif L[Inc+j]==3:
-                            img.paste(Bro,(Z-190,X-25),Bro)
                     else:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 255)', font=font)
                 else:
-                    if L[Inc+j]<10:
-                        if L[Inc+j] == m:
+                    if type(L[Inc+j]) == int:
+                        if L[Inc+j] == M:
                             draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                        elif L[Inc+j] == M:
+                        elif L[Inc+j] == m:
                             draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
                         else:
                             draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
-                        if L[Inc+j]==1:
-                            img.paste(Or,(Z-190,X-25),Or)
-                        elif L[Inc+j]==2:
-                            img.paste(Arg,(Z-190,X-25),Arg)
-                        elif L[Inc+j]==3:
-                            img.paste(Bro,(Z-190,X-25),Bro)
                     else:
-                        if L[Inc+j] == m:
+                        if L[Inc+j] == M:
                             draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                        elif L[Inc+j] == M:
+                        elif L[Inc+j] == m:
                             draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
                         else:
                             draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
 
             else:
-                if L[Inc+j]<10:
-                    if L[Inc+j] == m:
+                if type(L[Inc+j]) == int:
+                    if L[Inc+j] == M:
                         draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                    elif L[Inc+j] == M:
+                    elif L[Inc+j] == m:
                         draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
                     else:
                         draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
-                    if L[Inc+j]==1:
-                        img.paste(Or,(Z-190,X-25),Or) #80
-                    elif L[Inc+j]==2:
-                        img.paste(Arg,(Z-190,X-25),Arg)
-                    elif L[Inc+j]==3:
-                        img.paste(Bro,(Z-190,X-25),Bro)
                 else:
-                    if L[Inc+j] == m:
+                    if L[Inc+j] == M:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                    elif L[Inc+j] == M:
+                    elif L[Inc+j] == m:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
                     else:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
@@ -255,27 +222,27 @@ def entreescores14(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     H1c=40
     
     if len(Titre)<=33:
-        w1 = draw.textlength(Titre,font=fontunicode3)
-        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode3)
+        w1 = draw.textlength(Titre,font=font3)
+        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=font3)
     elif len(Titre)<=69:
-        w1 = draw.textlength(Titre,font=fontunicode4)
-        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode4)
+        w1 = draw.textlength(Titre,font=font4)
+        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=font4)
     else:
-        w1 = draw.textlength(Titre,font=fontunicode5)
-        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode5)
+        w1 = draw.textlength(Titre,font=font5)
+        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=font5)
 
     W2,H2=(1920,1000)
     H2b=1010
     H2c=1020
     if len(Musique)<=33:
-        w2 = draw.textlength(Musique,font=fontunicode3)
-        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode3)
+        w2 = draw.textlength(Musique,font=font3)
+        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=font3)
     elif len(Musique)<=69:
-        w2 = draw.textlength(Musique,font=fontunicode4)
-        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode4)
+        w2 = draw.textlength(Musique,font=font4)
+        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=font4)
     else:
-        w2  = draw.textlength(Musique,font=fontunicode5)
-        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode5)
+        w2  = draw.textlength(Musique,font=font5)
+        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=font5)
 
     draw.text((420,942), Picker, fill = 'rgb(255, 255, 255)', font=fontpick)
 
@@ -292,13 +259,9 @@ def entreescores18(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(Mustica, size=60) 
     font2= ImageFont.truetype(Mustica, size=65)
-    fontunicode3= ImageFont.truetype(Comfortaa, size=45)
-    fontunicode4= ImageFont.truetype(Comfortaa, size=35)
-    fontunicode5= ImageFont.truetype(Comfortaa, size=23)
-    fontunicode2 = ImageFont.truetype(arialunicode, size=65)
-    fontunicode3 = ImageFont.truetype(arialunicode, size=45)
-    fontunicode4 = ImageFont.truetype(arialunicode, size=35)
-    fontunicode5 = ImageFont.truetype(arialunicode, size=23)
+    font3= ImageFont.truetype(Comfortaa, size=45)
+    font4= ImageFont.truetype(Comfortaa, size=35)
+    font5= ImageFont.truetype(Comfortaa, size=23)
     fontpick = ImageFont.truetype(arlrdbd, size = 40)
     L2=L.copy()
     L2.remove(L2[Nomi-1])
@@ -314,55 +277,37 @@ def entreescores18(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
                 if Inc+j==Nomi-1:
                     if L[Inc+j]<10:
                         draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 255)', font=font)
-                        if L[Inc+j]==1:
-                            img.paste(Or,(Z-190,X-25),Or)
-                        elif L[Inc+j]==2:
-                            img.paste(Arg,(Z-190,X-25),Arg)
-                        elif L[Inc+j]==3:
-                            img.paste(Bro,(Z-190,X-25),Bro)
                     else:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 255)', font=font)
                 else:
                     if L[Inc+j]<10:
                         if L[Inc+j] == m:
-                            draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                        elif L[Inc+j] == M:
                             draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                        elif L[Inc+j] == M:
+                            draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                         else:
                             draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
-                        if L[Inc+j]==1:
-                            img.paste(Or,(Z-190,X-25),Or)
-                        elif L[Inc+j]==2:
-                            img.paste(Arg,(Z-190,X-25),Arg)
-                        elif L[Inc+j]==3:
-                            img.paste(Bro,(Z-190,X-25),Bro)
                     else:
                         if L[Inc+j] == m:
-                            draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                        elif L[Inc+j] == M:
                             draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                        elif L[Inc+j] == M:
+                            draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                         else:
                             draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
 
             else:
                 if L[Inc+j]<10:
                     if L[Inc+j] == m:
-                        draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                    elif L[Inc+j] == M:
                         draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                    elif L[Inc+j] == M:
+                        draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                     else:
                         draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
-                    if L[Inc+j]==1:
-                        img.paste(Or,(Z-190,X-25),Or) #80
-                    elif L[Inc+j]==2:
-                        img.paste(Arg,(Z-190,X-25),Arg)
-                    elif L[Inc+j]==3:
-                        img.paste(Bro,(Z-190,X-25),Bro)
                 else:
                     if L[Inc+j] == m:
-                        draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                    elif L[Inc+j] == M:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                    elif L[Inc+j] == M:
+                        draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                     else:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
         Inc=Inc+C[i]
@@ -380,27 +325,27 @@ def entreescores18(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     H1c=40
     
     if len(Titre)<=33:
-        w1 = draw.textlength(Titre,font=fontunicode3)
-        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode3)
+        w1 = draw.textlength(Titre,font=font3)
+        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=font3)
     elif len(Titre)<=69:
-        w1 = draw.textlength(Titre,font=fontunicode4)
-        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode4)
+        w1 = draw.textlength(Titre,font=font4)
+        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=font4)
     else:
-        w1 = draw.textlength(Titre,font=fontunicode5)
-        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode5)
+        w1 = draw.textlength(Titre,font=font5)
+        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=font5)
 
     W2,H2=(1920,1000)
     H2b=1010
     H2c=1020
     if len(Musique)<=33:
-        w2 = draw.textlength(Musique,font=fontunicode3)
-        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode3)
+        w2 = draw.textlength(Musique,font=font3)
+        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=font3)
     elif len(Musique)<=69:
-        w2 = draw.textlength(Musique,font=fontunicode4)
-        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode4)
+        w2 = draw.textlength(Musique,font=font4)
+        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=font4)
     else:
-        w2 = draw.textlength(Musique,font=fontunicode5)
-        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode5)
+        w2 = draw.textlength(Musique,font=font5)
+        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=font5)
 
     draw.text((420,942), Picker, fill = 'rgb(255, 255, 255)', font=fontpick)
 
@@ -419,13 +364,9 @@ def entreescores36(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(njnaruto, size=28) 
     font2= ImageFont.truetype(Mustica, size=65)
-    fontunicode3= ImageFont.truetype(Comfortaa, size=45)
-    fontunicode4= ImageFont.truetype(Comfortaa, size=35)
-    fontunicode5= ImageFont.truetype(Comfortaa, size=23)
-    fontunicode2 = ImageFont.truetype(arialunicode, size=65)
-    fontunicode3 = ImageFont.truetype(arialunicode, size=45)
-    fontunicode4 = ImageFont.truetype(arialunicode, size=35)
-    fontunicode5 = ImageFont.truetype(arialunicode, size=23)
+    font3= ImageFont.truetype(Comfortaa, size=45)
+    font4= ImageFont.truetype(Comfortaa, size=35)
+    font5= ImageFont.truetype(Comfortaa, size=23)
     fontpick = ImageFont.truetype(arlrdbd, size = 40)
     L2=L.copy()
     L2.remove(L2[Nomi-1])
@@ -441,55 +382,37 @@ def entreescores36(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
                 if Inc+j==Nomi-1:
                     if L[Inc+j]<10:
                         draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 255)', font=font)
-                        if L[Inc+j]==1:
-                            img.paste(Or,(Z-22,X-80),Or)
-                        elif L[Inc+j]==2:
-                            img.paste(Arg,(Z-22,X-80),Arg)
-                        elif L[Inc+j]==3:
-                            img.paste(Bro,(Z-22,X-80),Bro)
                     else:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 255)', font=font)
                 else:
                     if L[Inc+j]<10:
                         if L[Inc+j] == m:
-                            draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                        elif L[Inc+j] == M:
                             draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                        elif L[Inc+j] == M:
+                            draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                         else:
                             draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
-                        if L[Inc+j]==1:
-                            img.paste(Or,(Z-22,X-80),Or)
-                        elif L[Inc+j]==2:
-                            img.paste(Arg,(Z-22,X-80),Arg)
-                        elif L[Inc+j]==3:
-                            img.paste(Bro,(Z-22,X-80),Bro)
                     else:
                         if L[Inc+j] == m:
-                            draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                        elif L[Inc+j] == M:
                             draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                        elif L[Inc+j] == M:
+                            draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                         else:
                             draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
 
             else:
                 if L[Inc+j]<10:
                     if L[Inc+j] == m:
-                        draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                    elif L[Inc+j] == M:
                         draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                    elif L[Inc+j] == M:
+                        draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                     else:
                         draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
-                    if L[Inc+j]==1:
-                        img.paste(Or,(Z-22,X-80),Or) #80
-                    elif L[Inc+j]==2:
-                        img.paste(Arg,(Z-22,X-80),Arg)
-                    elif L[Inc+j]==3:
-                        img.paste(Bro,(Z-22,X-80),Bro)
                 else:
                     if L[Inc+j] == m:
-                        draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                    elif L[Inc+j] == M:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                    elif L[Inc+j] == M:
+                        draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                     else:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
         Inc=Inc+C[i]
@@ -506,29 +429,30 @@ def entreescores36(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     W1,H1=(1920,20)
     H1b=30
     H1c=40
+    
     if len(Titre)<=33:
-        w1 = draw.textlength(Titre,font=fontunicode3)
-        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode3)
+        w1 = draw.textlength(Titre,font=font3)
+        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=font3)
     elif len(Titre)<=69:
-        w1 = draw.textlength(Titre,font=fontunicode4)
-        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode4)
+        w1 = draw.textlength(Titre,font=font4)
+        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=font4)
     else:
-        w1 = draw.textlength(Titre,font=fontunicode5)
-        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode5)
+        w1 = draw.textlength(Titre,font=font5)
+        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=font5)
 
 
     W2,H2=(1920,1000)
     H2b=1010
     H2c=1020
     if len(Musique)<=33:
-        w2 = draw.textlength(Musique,font=fontunicode3)
-        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode3)
+        w2 = draw.textlength(Musique,font=font3)
+        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=font3)
     elif len(Musique)<=69:
-        w2 = draw.textlength(Musique,font=fontunicode4)
-        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode4)
+        w2 = draw.textlength(Musique,font=font4)
+        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=font4)
     else:
-        w2 = draw.textlength(Musique,font=fontunicode5)
-        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode5)
+        w2 = draw.textlength(Musique,font=font5)
+        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=font5)
 
 
     draw.text((420,942), Picker, fill = 'rgb(255, 255, 255)', font=fontpick)
@@ -549,13 +473,9 @@ def entreescores54(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
 
     font = ImageFont.truetype(njnaruto, size=28) 
     font2= ImageFont.truetype(Mustica, size=65)
-    fontunicode3= ImageFont.truetype(Comfortaa, size=45)
-    fontunicode4= ImageFont.truetype(Comfortaa, size=35)
-    fontunicode5= ImageFont.truetype(Comfortaa, size=23)
-    fontunicode2 = ImageFont.truetype(arialunicode, size=65)
-    fontunicode3 = ImageFont.truetype(arialunicode, size=45)
-    fontunicode4 = ImageFont.truetype(arialunicode, size=35)
-    fontunicode5 = ImageFont.truetype(arialunicode, size=23)
+    font3= ImageFont.truetype(Comfortaa, size=45)
+    font4= ImageFont.truetype(Comfortaa, size=35)
+    font5= ImageFont.truetype(Comfortaa, size=23)
     fontpick = ImageFont.truetype(arlrdbd, size = 40)
     L2=L.copy()
     L2.remove(L2[Nomi-1])
@@ -571,55 +491,37 @@ def entreescores54(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
                 if Inc+j==Nomi-1:
                     if L[Inc+j]<10:
                         draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 255)', font=font)
-                        if L[Inc+j]==1:
-                            img.paste(Or,(Z-22,X-80),Or)
-                        elif L[Inc+j]==2:
-                            img.paste(Arg,(Z-22,X-80),Arg)
-                        elif L[Inc+j]==3:
-                            img.paste(Bro,(Z-22,X-80),Bro)
                     else:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 255)', font=font)
                 else:
                     if L[Inc+j]<10:
                         if L[Inc+j] == m:
-                            draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                        elif L[Inc+j] == M:
                             draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                        elif L[Inc+j] == M:
+                            draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                         else:
                             draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
-                        if L[Inc+j]==1:
-                            img.paste(Or,(Z-22,X-80),Or)
-                        elif L[Inc+j]==2:
-                            img.paste(Arg,(Z-22,X-80),Arg)
-                        elif L[Inc+j]==3:
-                            img.paste(Bro,(Z-22,X-80),Bro)
                     else:
                         if L[Inc+j] == m:
-                            draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                        elif L[Inc+j] == M:
                             draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                        elif L[Inc+j] == M:
+                            draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                         else:
                             draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
 
             else:
                 if L[Inc+j]<10:
                     if L[Inc+j] == m:
-                        draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                    elif L[Inc+j] == M:
                         draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                    elif L[Inc+j] == M:
+                        draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                     else:
                         draw.text((Z,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
-                    if L[Inc+j]==1:
-                        img.paste(Or,(Z-22,X-80),Or) #80
-                    elif L[Inc+j]==2:
-                        img.paste(Arg,(Z-22,X-80),Arg)
-                    elif L[Inc+j]==3:
-                        img.paste(Bro,(Z-22,X-80),Bro)
                 else:
                     if L[Inc+j] == m:
-                        draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
-                    elif L[Inc+j] == M:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 0, 0)', font=font)
+                    elif L[Inc+j] == M:
+                        draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(0, 255, 0)', font=font)
                     else:
                         draw.text((Y,X), str(L[Inc+j]),fill = 'rgb(255, 255, 255)', font=font)
         Inc=Inc+C[i]
@@ -639,28 +541,28 @@ def entreescores54(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     H1c=30
     
     if len(Titre)<=33:
-        w1 = draw.textlength(Titre,font=fontunicode3)
-        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode3)
+        w1 = draw.textlength(Titre,font=font3)
+        draw.text(((W1-w1)/2,H1), Titre, fill = 'rgb(255, 255, 255)', font=font3)
     elif len(Titre)<=69:
-        w1 = draw.textlength(Titre,font=fontunicode4)
-        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode4)
+        w1 = draw.textlength(Titre,font=font4)
+        draw.text(((W1-w1)/2,H1b), Titre, fill = 'rgb(255, 255, 255)', font=font4)
     else:
-        w1 = draw.textlength(Titre,font=fontunicode5)
-        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=fontunicode5)
+        w1 = draw.textlength(Titre,font=font5)
+        draw.text(((W1-w1)/2,H1c), Titre, fill = 'rgb(255, 255, 255)', font=font5)
 
 
     W2,H2=(1920,1015)
     H2b=1025
     H2c=1035
     if len(Musique)<=33:
-        w2 = draw.textlength(Musique,font=fontunicode3)
-        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode3)
+        w2 = draw.textlength(Musique,font=font3)
+        draw.text(((W2-w2)/2,H2), Musique, fill = 'rgb(255, 255, 255)', font=font3)
     elif len(Musique)<=69:
-        w2 = draw.textlength(Musique,font=fontunicode4)
-        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode4)
+        w2 = draw.textlength(Musique,font=font4)
+        draw.text(((W2-w2)/2,H2b), Musique, fill = 'rgb(255, 255, 255)', font=font4)
     else:
-        w2 = draw.textlength(Musique,font=fontunicode5)
-        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=fontunicode5)
+        w2 = draw.textlength(Musique,font=font5)
+        draw.text(((W2-w2)/2,H2c), Musique, fill = 'rgb(255, 255, 255)', font=font5)
         
     draw.text((535,962), Picker, fill = 'rgb(255, 255, 255)', font=fontpick)
 
@@ -669,15 +571,6 @@ def entreescores54(L,C,E,x1,CL,DL,k,Rang,Total,Nomi,Titre,Musique, Picker, outpu
     img.save(test)
     os.chdir(Chemin)
     return()
-
-def verif_picker(dico):
-    liste = []
-    for elem in dico:
-        if dico[elem] == False:
-            liste.append(elem)
-    if len(liste) != 0:
-        print(f"❌ Utilisateurs qui posent problème : {', '.join(map(str, liste))}")
-    
 
 def creationimages8(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
     E=240 
@@ -689,11 +582,11 @@ def creationimages8(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
     CL=[y1,y2]
     DL=[z1,z2]
     r=len(R)
-
+    Av = average(R)
 
     Picker_Liste = Picker.copy()
     Picker.sort()
-    
+
     dico = {}
     for i in range(len(order)):
         dico[order[i]] = i+1
@@ -706,10 +599,10 @@ def creationimages8(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
     for i in range(len(Picker_Liste)):
         Nomi.append(dico[Picker_Liste[i]])
 
-    print(verif_picker(dico))
+    print(Nomi)
 
     for k in range(r):
-        entreescores8(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
+        entreescores8(R[k],C,E,x1,CL,DL,k+1,Rang[k],Av[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
     return()
 
 
@@ -718,12 +611,12 @@ def creationimages14(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
     E=145
     x1=50
     y1=170 
-    z1=180 
+    z1=170 #180
     y2=1820 
-    z2=1845 
-    CL=[y1,y2]
+    z2=1830 #1845
+    CL=[y1,y2] 
     DL=[z1,z2]
-
+    Av = average(R)
 
     Picker_Liste = Picker.copy()
     Picker.sort()
@@ -735,16 +628,16 @@ def creationimages14(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
     for i in range(len(Picker)):
         if Picker[i] not in order:
             dico[Picker[i]] = False
-
+            
         
     Nomi = []
     for i in range(len(Picker_Liste)):
         Nomi.append(dico[Picker_Liste[i]])
 
-    verif_picker(dico)
+    print(Nomi)
 
     for k in range(r):
-        entreescores14(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
+        entreescores14(R[k],C,E,x1,CL,DL,k+1,Rang[k],Av[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
     return()
 
 def creationimages18(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
@@ -754,10 +647,11 @@ def creationimages18(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
     y1=170 
     z1=180
     y2=1810 
-    z2=1835 
+    z2=1835
+    
     CL=[y1,y2]
     DL=[z1,z2]
-
+    Av = average(R)
     Picker_Liste = Picker.copy()
     Picker.sort()
 
@@ -768,16 +662,16 @@ def creationimages18(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
     for i in range(len(Picker)):
         if Picker[i] not in order:
             dico[Picker[i]] = False
-
+            
         
     Nomi = []
     for i in range(len(Picker_Liste)):
         Nomi.append(dico[Picker_Liste[i]])
 
-    verif_picker(dico)
+    print(Nomi)
 
     for k in range(r):
-        entreescores18(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
+        entreescores18(R[k],C,E,x1,CL,DL,k+1,Rang[k],Av[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
     return()
 
 
@@ -795,6 +689,7 @@ def creationimages36(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
     z4=1797
     CL=[y1,y2,y3,y4]
     DL=[z1,z2,z3,z4]
+    Av = average(R)
 
     Picker_Liste = Picker.copy()
     Picker.sort()
@@ -812,10 +707,10 @@ def creationimages36(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
     for i in range(len(Picker_Liste)):
         Nomi.append(dico[Picker_Liste[i]])
 
-    verif_picker(dico)
+    print(Nomi)
 
     for k in range(r):
-        entreescores36(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
+        entreescores36(R[k],C,E,x1,CL,DL,k+1,Rang[k],Av[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
     return()
 
 def creationimages54(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
@@ -836,7 +731,7 @@ def creationimages54(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
     z6=1797 
     CL=[y1,y2,y3,y4,y5,y6]
     DL=[z1,z2,z3,z4,z5,z6]
-
+    Av = average(R)
     Picker_Liste = Picker.copy()
     Picker.sort()
 
@@ -853,8 +748,8 @@ def creationimages54(R,C,Rang,Total,Titre,Musique, Picker, output_path, order):
     for i in range(len(Picker_Liste)):
         Nomi.append(dico[Picker_Liste[i]])
 
-    verif_picker(dico)
+    print(Nomi)
 
     for k in range(r):
-        entreescores54(R[k],C,E,x1,CL,DL,k+1,Rang[k],Total[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
+        entreescores54(R[k],C,E,x1,CL,DL,k+1,Rang[k],Av[k],Nomi[k],Titre[k],Musique[k], Picker_Liste[k], output_path)
     return()

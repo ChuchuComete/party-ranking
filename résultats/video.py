@@ -13,17 +13,18 @@ import aiohttp
 import asyncio
 from yt_dlp import YoutubeDL
 
+from results import nomination, top_pr
 from new_video_editing import new_video_editing
 
 
-VERSION = "2.0.0"
+VERSION = "2.2.0"
 print(f"video.py version {VERSION}")
 
 pr = ''
 cdn = ['catbox', 'animemusicquiz.com', 'prlive-static.frederic94500.net']
 
 transition = 1
-song_per_part = 45
+song_per_part = 500
 reverse = False
 threads = 4
 
@@ -44,9 +45,13 @@ if config_error:
 
 
 class SampledSong(Song):
-    def __init__(self, anime, song_type, info, link, score, sample, sample_length, ranks, order):
-        Song.__init__(self, anime, song_type, info, link)
+    def __init__(self, picker, top, anime, song_type, info, link, score, sample, sample_length, ranks, order):
+        Song.__init__(self, picker, anime, song_type, info, link)
         self.final_score = score
+        if top_pr:
+            self.top = top
+        else:
+            self.top=None
         if sample is None:
             exit("❌ Une ou plusieurs des cases Sample est vide!")
         self.sample = max(sample, transition)
@@ -85,8 +90,14 @@ def get_results(sheet):
 
     header = rows[0]
     scoring_pr = 'Average' in header
+    if scoring_pr:
+        print("Scoring PR Detected")
 
     rank_index = header.index('Rank')
+    if nomination:
+        picker_index = header.index('Picker')
+    if top_pr:
+        top_index = header.index('Top')
     anime_index = header.index('Anime Name')
     type_index = header.index('Song Type')
     info_index = header.index('Song Info')
@@ -101,9 +112,19 @@ def get_results(sheet):
     for i in range(1, len(rows)):
         if not rows[i][rank_index]:
             raise Exception('Tiebreak needed')
-        songs[rows[i][rank_index]] = SampledSong(rows[i][anime_index], rows[i][type_index], rows[i][info_index],
-                                                 rows[i][info_index + 1], rows[i][score_index], rows[i][sample_index],
-                                                 rows[i][sample_length_index], rows[i][people_index:], order)
+        if nomination:
+            songs[rows[i][rank_index]] = SampledSong(rows[i][picker_index], None, rows[i][anime_index], rows[i][type_index], rows[i][info_index],
+                                                    rows[i][info_index + 1], rows[i][score_index], rows[i][sample_index],
+                                                    rows[i][sample_length_index], rows[i][people_index:], order)
+        elif top_pr:
+            songs[rows[i][rank_index]] = SampledSong(None, rows[i][top_index], rows[i][anime_index], rows[i][type_index], rows[i][info_index],
+                                                    rows[i][info_index + 1], rows[i][score_index], rows[i][sample_index],
+                                                    rows[i][sample_length_index], rows[i][people_index:], order)
+        else:
+            songs[rows[i][rank_index]] = SampledSong(None, None, rows[i][anime_index], rows[i][type_index], rows[i][info_index],
+                                        rows[i][info_index + 1], rows[i][score_index], rows[i][sample_index],
+                                        rows[i][sample_length_index], rows[i][people_index:], order)
+
     return songs, order
 
 
@@ -125,33 +146,21 @@ def youtube_dl(link, output_name):
     with YoutubeDL(ydl_opts) as ydl:
         ydl.download([link])
 
-async def download_file(session, url, filename):
-    try:
-        async with session.get(url) as response:
-            if response.status == 200:
-                with open(filename, 'wb') as file:
-                    file.write(await response.read())
-            else:
-                print(f"Failed to download {url}")
-    except Exception as e:
-        print(f"Failed to download {url}: {e}")
 
-async def download_songs_async(songs, song_range):
-    async with aiohttp.ClientSession() as session:
-        tasks = []
-        for i in range(song_range[0], song_range[1]):
-            link = songs[i].link
-            print("Downloading: " + link)
-            if any([domain in link for domain in cdn]):
-                tasks.append(download_file(session, link, f'{i}.{songs[i].extension}'))
-            elif 'youtu' in link:
-                tasks.append(asyncio.to_thread(youtube_dl, link, f'{i}.mp4'))
-        await asyncio.gather(*tasks)
+def execute_command(command):
+    os.system(command)
 
 def download_songs(songs, song_range):
-    asyncio.run(download_songs_async(songs, song_range))
+    for i in range(song_range[0], song_range[1]):
+        link = songs[i].link
+        print(link)
+        if 'catbox' in link or 'animemusicquiz.com' in link:
+            command = f'ffmpeg -i {link} -c copy {i}.{songs[i].extension}'
+            execute_command(command)
+        elif 'youtu' in link:
+            youtube_dl(link, f'{i}.mp4')
 
-
+"""
 def get_song(i):
     print(songs[i].info)
     clip = VideoFileClip(f'temp/{i}.{songs[i].extension}')
@@ -205,7 +214,7 @@ def normalize_audio(song_range):
     normalizer.run_normalization()
     for i in range(song_range[0], song_range[1]):
         clips[i].audio = AudioFileClip(f'temp/normalized_{i}.wav')
-
+"""
 
 def split(x, n):
     r = x % n
@@ -248,38 +257,155 @@ def create_layouts(order, songs, output_path):
     C = nb_columns(len(order))
     pr_range = range(1, len(songs) + 1)
 
-    import ScriptPR as Nono
     Rang = list(pr_range)
     Total = [songs[i].score for i in pr_range]
     R = [[songs[i].scores[name] for name in order] for i in pr_range]
     Titre = [songs[i].anime + ' ' + songs[i].type for i in pr_range]
     Musique = [songs[i].info for i in pr_range]
 
-    if people ==1:
-        Nono.creationimagessolo(R, C, Rang, Total, Titre, Musique, output_path)
-    elif people <= 8:
-        Nono.creationimages8(R, C, Rang, Total, Titre, Musique, output_path)
+    if top_pr:
+        Top = [songs[i].top for i in pr_range]
+        import ScriptPRTop as NonoTop
+        if people ==1:
+            NonoTop.creationimagessolo(R, C, Rang, Total, Titre, Musique, output_path, Top)
+        elif people <= 8:
+            NonoTop.creationimages8(R, C, Rang, Total, Titre, Musique, output_path, Top)
 
-    elif people <= 14:
-        Nono.creationimages14(R, C, Rang, Total, Titre, Musique, output_path)
+        elif people <= 14:
+            NonoTop.creationimages14(R, C, Rang, Total, Titre, Musique, output_path, Top)
 
-    elif people <= 18:
-        Nono.creationimages18(R, C, Rang, Total, Titre, Musique, output_path)
+        elif people <= 18:
+            NonoTop.creationimages18(R, C, Rang, Total, Titre, Musique, output_path, Top)
 
-    elif people <= 36:
-        Nono.creationimages36(R, C, Rang, Total, Titre, Musique, output_path)        
+        elif people <= 36:
+            NonoTop.creationimages36(R, C, Rang, Total, Titre, Musique, output_path, Top)        
 
-    elif people <= 54:
-        Nono.creationimages54(R, C, Rang, Total, Titre, Musique, output_path)
+        elif people <= 54:
+            NonoTop.creationimages54(R, C, Rang, Total, Titre, Musique, output_path, Top)
 
-    elif people <= 60:
-        Nono.creationimages60(R, C, Rang, Total, Titre, Musique, output_path)
+        elif people <= 60:
+            NonoTop.creationimages60(R, C, Rang, Total, Titre, Musique, output_path, Top)
 
-    elif people <=72:
-        Nono.creationimages72(R, C, Rang, Total, Titre, Musique, output_path)
+        elif people <=72:
+            Nono.creationimages72(R, C, Rang, Total, Titre, Musique, output_path, Top)
 
-    elif people <= 80:
-        Nono.creationimages80(R, C, Rang, Total, Titre, Musique, output_path)
+        elif people <= 80:
+            Nono.creationimages80(R, C, Rang, Total, Titre, Musique, output_path, Top)
+
+    elif nomination:
+        Picker = [songs[i].picker for i in pr_range]
+
+        if scoring_pr:
+            import ScriptPRNomi_Scoring as NonoScoringNomi
+            if people <= 8:
+                NonoScoringNomi.creationimages8(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
+
+            elif people <= 14:
+                NonoScoringNomi.creationimages14(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
+
+            elif people <= 18:
+                NonoScoringNomi.creationimages18(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
+
+            elif people <= 36:
+                NonoScoringNomi.creationimages36(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)        
+
+            elif people <= 54:
+                NonoScoringNomi.creationimages54(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
+
+            elif people <= 60:
+                NonoScoringNomi.creationimages60(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
+
+            elif people <= 72:
+                NonoScoringNomi.creationimages72(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
+
+            elif people <= 80:
+                NonoScoringNomi.creationimages80(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
+        else:
+            import ScriptPRNomi as NonoNomi
+            if people <= 8:
+                NonoNomi.creationimages8(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
+
+            elif people <= 14:
+                NonoNomi.creationimages14(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
+
+            elif people <= 18:
+                NonoNomi.creationimages18(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
+
+            elif people <= 36:
+                NonoNomi.creationimages36(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)        
+
+            elif people <= 54:
+                NonoNomi.creationimages54(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
+
+            elif people <= 60:
+                NonoNomi.creationimages60(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
+
+            elif people <= 72:
+                NonoNomi.creationimages72(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
+
+            elif people <= 80:
+                NonoNomi.creationimages80(R, C, Rang, Total, Titre, Musique, Picker, output_path, order)
+
+    else:
+        if scoring_pr:
+            import ScriptPR_Scoring as NonoScoring
+            if people ==1:
+                NonoScoring.creationimagessolo(R, C, Rang, Total, Titre, Musique, output_path)
+
+            elif people <= 8:
+                NonoScoring.creationimages8(R, C, Rang, Total, Titre, Musique, output_path)
+
+            elif people <= 14:
+                NonoScoring.creationimages14(R, C, Rang, Total, Titre, Musique, output_path)
+
+            elif people <= 18:
+                NonoScoring.creationimages18(R, C, Rang, Total, Titre, Musique, output_path)
+
+            elif people <= 36:
+                NonoScoring.creationimages36(R, C, Rang, Total, Titre, Musique, output_path)        
+
+            elif people <= 54:
+                NonoScoring.creationimages54(R, C, Rang, Total, Titre, Musique, output_path)
+
+            elif people <= 60:
+                NonoScoring.creationimages60(R, C, Rang, Total, Titre, Musique, output_path)
+
+            elif people <=72:
+                NonoScoring.creationimages72(R, C, Rang, Total, Titre, Musique, output_path)
+
+            elif people <= 80:
+                NonoScoring.creationimages80(R, C, Rang, Total, Titre, Musique, output_path)
+
+        else:
+            import ScriptPR as Nono
+            if people ==1:
+                Nono.creationimagessolo(R, C, Rang, Total, Titre, Musique, output_path)
+            elif people <= 8:
+                Nono.creationimages8(R, C, Rang, Total, Titre, Musique, output_path)
+
+            elif people <= 14:
+                Nono.creationimages14(R, C, Rang, Total, Titre, Musique, output_path)
+
+            elif people <= 18:
+                Nono.creationimages18(R, C, Rang, Total, Titre, Musique, output_path)
+
+            elif people <= 36:
+                Nono.creationimages36(R, C, Rang, Total, Titre, Musique, output_path)        
+
+            elif people <= 54:
+                Nono.creationimages54(R, C, Rang, Total, Titre, Musique, output_path)
+
+            elif people <= 60:
+                Nono.creationimages60(R, C, Rang, Total, Titre, Musique, output_path)
+
+            elif people <=72:
+                Nono.creationimages72(R, C, Rang, Total, Titre, Musique, output_path)
+
+            elif people <= 80:
+                Nono.creationimages80(R, C, Rang, Total, Titre, Musique, output_path)
+
+    
+    
 
 def fuse_parts(parts):
     video_parts = {}
@@ -353,7 +479,7 @@ if __name__ == '__main__':
     parser.add_argument("--verbose", help="Verbose mode", action="store_true")
     args = parser.parse_args()
 
-    scoring_pr = False
+    #scoring_pr = False
     base_path = os.getcwd()
     Path('temp').mkdir(parents=True, exist_ok=True)
     temp_path = os.path.join(base_path, 'temp')
@@ -395,9 +521,20 @@ if __name__ == '__main__':
         progress['layout'] = True
         save_progress(progress)
         
-    if args.new_video_editing:
+    #if args.new_video_editing:
+    if progress["downloaded"] != 1:
+        os.chdir(temp_path)
+        download_songs(songs, [1, len(songs)+1])
+        os.chdir(base_path)
+        progress['downloaded'] += 1
+        save_progress(progress)
+    
+    if progress["downloaded"] == 1:
         songs_list = list(songs.values())
-        songs_list = sorted(songs_list, key=lambda x: x.final_score, reverse=reverse)
+        if scoring_pr:
+            songs_list = sorted(songs_list, key=lambda x: x.final_score, reverse=True)
+        else:
+            songs_list = sorted(songs_list, key=lambda x: x.final_score, reverse=reverse)
         try:
             new_video_editing(pr, songs_list, threads, args.gpu, args.skip_preprocessing, args.skip_video_concatenation, args.skip_audio_concatenation, args.cpu_final, args.webm, args.fhd, local_binary_folder, verbose=args.verbose)
         except Exception as e:
@@ -407,6 +544,7 @@ if __name__ == '__main__':
         print("✅ Fin du montage video")
         exit(0)
 
+"""
     while progress['done'] < progress['parts']:
         song_range = progress['range_list'][progress['done']]
         if progress['downloaded'] == progress['done']:
@@ -448,3 +586,4 @@ if __name__ == '__main__':
         progress['video'] = True
 
         save_progress(progress)
+"""

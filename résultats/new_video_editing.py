@@ -100,14 +100,23 @@ async def download_async(songs):
 def download(songs):
     asyncio.run(download_async(songs))
 
+#def get_file_length(file, local_binary_folder) -> float:
+#    result = subprocess.check_output(
+#        f'{local_binary_folder}ffprobe -i {file} -show_entries format=duration -v quiet -of csv="p=0"',
+#        shell=True
+#    )
+#    return float(result.strip())
 
-def get_file_length(file, local_binary_folder) -> float:
+def get_file_length(file, local_binary_folder, stream_type='v') -> float:
+    """Gets duration from stream level rather than container level to avoid rounding mismatches."""
+    selector = f'{stream_type}:0'
     result = subprocess.check_output(
-        f'{local_binary_folder}ffprobe -i {file} -show_entries format=duration -v quiet -of csv="p=0"',
+        f'{local_binary_folder}ffprobe -i {file} -select_streams {selector} '
+        f'-show_entries stream=duration -v quiet -of csv="p=0"',
         shell=True
     )
-    return float(result.strip())
-
+    val = result.decode().strip().splitlines()[0]
+    return float(val)
 
 def verify_sample(songs, local_binary_folder) -> bool:
     """Vérifie si la durée de l'échantillon est correcte et ne dépasse pas la durée de la vidéo."""
@@ -188,6 +197,78 @@ def verify_part_files(local_binary_folder) -> List[FileInfo]:
 
     return files
 
+#def preprocess_videos(songs, encoder: str, quality: str, threads: int, local_binary_folder, verbose="") -> List[FileInfo]:
+#    """Prétraite chaque vidéo et applique les filtres nécessaires."""
+"""
+    files = []
+    for i in range(len(songs), 0, -1):
+        song = songs[i-1]
+        print(i, song.info)
+
+        input_video = f'temp/{i}.webm' if os.path.exists(
+           f'temp/{i}.webm') else f'temp/{i}.mp4'
+        overlay_image = f'temp/a{i}.png'
+        output_video = f'temp/{i}_processed.mp4'
+        output_audio = f'temp/{i}_audio.wav'
+
+        if not os.path.exists(output_video):
+            ffprobe_command = (
+                f'{local_binary_folder}ffprobe -v error -select_streams v:0 -show_entries stream=width,height '
+                f'-of csv=p=0:s=x {input_video}'
+            )
+            video_dimensions = subprocess.check_output(
+                ffprobe_command, shell=True).decode().strip()
+            input_width, input_height = map(int, video_dimensions.split('x'))
+
+            input_aspect = input_width / input_height
+            target_aspect = width / height
+            
+            if input_aspect > target_aspect:
+                scale_width = width
+                scale_height = int(width / input_aspect)
+                pad_top = (height - scale_height) // 2
+                pad_bottom = height - scale_height - pad_top
+                pad_left, pad_right = 0, 0
+            elif input_aspect < target_aspect:
+                scale_width = int(height * input_aspect)
+                scale_height = height
+                pad_left = (width - scale_width) // 2
+                pad_right = width - scale_width - pad_left
+                pad_top, pad_bottom = 0, 0
+            else:
+                scale_width, scale_height = width, height
+                pad_top, pad_bottom, pad_left, pad_right = 0, 0, 0, 0
+
+            pad_filter = (
+                f"scale={scale_width}:{scale_height},"
+                f"pad={width}:{height}:{pad_left}:{pad_top}:black"
+            )
+
+            ffmpeg_command_video = (
+                f'{local_binary_folder}ffmpeg {verbose} -ss {song.sample} -t {song.sample_length} -i {input_video} -i {overlay_image} '
+                f'-filter_complex "[0:v]{pad_filter}[scaled];[1:v]scale={width}:{height}[overlay];'
+                f'[scaled][overlay]overlay=x=0:y=0,fps=fps=23.976[output]" '
+                f'-map "[output]" -c:v {encoder} {quality} -video_track_timescale 24000 '
+                f'-an -threads {threads} {output_video}'
+            )
+            os.system(ffmpeg_command_video)
+            
+        if not os.path.exists(output_audio):
+            ffmpeg_command_audio = (
+                f'{local_binary_folder}ffmpeg {verbose} -ss {song.sample} -t {song.sample_length} -i {input_video} -vn -c:a pcm_s16le -af loudnorm -threads {threads} {output_audio}'
+            )
+            os.system(ffmpeg_command_audio)
+
+        result_video = get_file_length(output_video, local_binary_folder)
+        result_audio = get_file_length(output_audio, local_binary_folder)
+        if abs(result_audio - result_video) > 0.1:
+            print(f"Audio and video duration mismatch for {output_video}")
+            sys.exit(1)
+        files.append({"videoFile": output_video,
+                     "audioFile": output_audio, "duration": result_audio})
+
+    return files
+"""
 
 def preprocess_videos(songs, encoder: str, quality: str, threads: int, local_binary_folder, verbose="") -> List[FileInfo]:
     """Prétraite chaque vidéo et applique les filtres nécessaires."""
@@ -250,16 +331,19 @@ def preprocess_videos(songs, encoder: str, quality: str, threads: int, local_bin
             )
             os.system(ffmpeg_command_audio)
 
-        result_video = get_file_length(output_video, local_binary_folder)
-        result_audio = get_file_length(output_audio, local_binary_folder)
-        if abs(result_audio - result_video) > 0.1:
-            print(f"Audio and video duration mismatch for {output_video}")
+        result_video = get_file_length(output_video, local_binary_folder, stream_type='v')
+        result_audio = get_file_length(output_audio, local_binary_folder, stream_type='a')
+        if abs(result_audio - result_video) > 0.5:
+            print(
+                f"Duration mismatch for {output_video}: "
+                f"video={result_video:.3f}s  audio={result_audio:.3f}s  "
+                f"expected≈{float(song.sample_length):.3f}s"
+            )
             sys.exit(1)
         files.append({"videoFile": output_video,
                      "audioFile": output_audio, "duration": result_audio})
 
     return files
-
 
 def concatenate_videos(files, part, threads, encoder, quality, local_binary_folder, verbose) -> List[FileInfo]:
     """Concatène les vidéos prétraitées avec des transitions."""
@@ -298,8 +382,9 @@ def concatenate_videos(files, part, threads, encoder, quality, local_binary_fold
     return {"videoFile": output_file, "duration": video_duration}
 
 
-def concatenate_audio(files, threads, local_binary_folder, verbose="") -> str:
-    """Concatène les fichiers audio."""
+#def concatenate_audio(files, threads, local_binary_folder, verbose="") -> str:
+#    """Concatène les fichiers audio."""
+"""
     inputs = ""
     filters = ""
     accumulated_offset = 0.0
@@ -333,7 +418,85 @@ def concatenate_audio(files, threads, local_binary_folder, verbose="") -> str:
     print(f"Output file created: {output_file}")
 
     return output_file
+"""
+def concatenate_audio(files, threads, local_binary_folder, verbose="") -> str:
+    """Concatène les fichiers audio en utilisant des batchs pour éviter les erreurs mémoire."""
+    
+    BATCH_SIZE = 10
+    output_file = "output_audio.wav"
 
+    def merge_batch(batch_files: list, output_path: str, fade_in: bool, fade_out: bool):
+        """Merge a batch of files with crossfades, optional fade in/out."""
+        inputs = ""
+        filters = ""
+
+        for idx, file in enumerate(batch_files):
+            audio_path = file if isinstance(file, str) else file['audioFile']
+            duration   = None if isinstance(file, str) else file['duration']
+            inputs += f" -i {audio_path}"
+
+            if idx == 0:
+                if fade_in:
+                    filters = f"[0:a]afade=t=in:st=0:d={transition_duration}[a0]; "
+                else:
+                    filters = f"[0:a]acopy[a0]; "
+            else:
+                filters += f"[a{idx-1}][{idx}:a]acrossfade=d={transition_duration}[a{idx}]; "
+
+        last_label = f"a{len(batch_files) - 1}"
+
+        if fade_out:
+            accumulated = sum(
+                (f['duration'] if not isinstance(f, str) else get_file_length(f, local_binary_folder, 'a'))
+                for f in batch_files
+            ) - transition_duration * (len(batch_files) - 1) - transition_duration
+            out_label = f"a{len(batch_files)}"
+            filters += f"[{last_label}]afade=t=out:st={accumulated}:d={transition_duration}[{out_label}]"
+            last_label = out_label
+        else:
+            filters = filters.rstrip("; ")
+
+        command = (
+            f"{local_binary_folder}ffmpeg {verbose} {inputs} "
+            f"-filter_complex \"{filters}\" "
+            f"-map_metadata -1 -avoid_negative_ts make_zero "
+            f"-map \"[{last_label}]\" -c:a pcm_s16le -threads {threads} {output_path}"
+        )
+        print(command)
+        os.system(command)
+
+    # --- Split into batches and merge progressively ---
+    batches = [files[i:i+BATCH_SIZE] for i in range(0, len(files), BATCH_SIZE)]
+
+    if len(batches) == 1:
+        # Small enough to do in one pass
+        merge_batch(batches[0], output_file, fade_in=True, fade_out=True)
+    else:
+        # First pass: merge each batch into a temp intermediate
+        intermediates = []
+        for batch_idx, batch in enumerate(batches):
+            is_first = batch_idx == 0
+            is_last  = batch_idx == len(batches) - 1
+            temp_path = f"temp/intermediate_{batch_idx}.wav"
+
+            merge_batch(
+                batch,
+                temp_path,
+                fade_in=is_first,
+                fade_out=is_last
+            )
+            # Wrap intermediate as a dict so it's compatible with merge_batch
+            intermediates.append({
+                'audioFile': temp_path,
+                'duration': get_file_length(temp_path, local_binary_folder, 'a')
+            })
+
+        # Second pass: merge all intermediates into the final file
+        # No fade in/out — already applied in the first pass
+        merge_batch(intermediates, output_file, fade_in=False, fade_out=False)
+
+    print(f"Output file created: {output_file}")
+    return output_file
 
 def final_concatenate(pr_name, final_videos, audio_file, local_binary_folder, threads, encoder, quality, audio_encoder="aac", webm=False, verbose=""):
     """Concatène les vidéos prétraitées avec des transitions."""
@@ -423,7 +586,7 @@ def new_video_editing(pr_name: str, songs, threads=1, gpu=False, skip_preprocess
     start = time.time()
 
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
-    download(songs)
+    #download(songs)
 
     if not verify_sample(songs, local_binary_folder):
         print("Sample duration exceeds video duration")

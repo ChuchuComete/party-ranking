@@ -12,7 +12,7 @@ from pyexcel_xlsx import get_data
 import os
 import configparser
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 print(f"results.py version {VERSION}")
 
 print(f"Operating system: {os.name}")
@@ -22,9 +22,10 @@ regex = r'\\(.*) [(](.*)[)]' if os.name == 'nt' else r'/(.*) \((.*)\)'
 
 pr = ''  # laisser vide si un seul pr dans le dossier
 scoring_pr = False
+nomination = False
+top_pr = False
 order = []  # laisser vide si ordre alphabétique
 C = []
-
 
 config = configparser.ConfigParser()
 config.read('../config.txt')
@@ -46,13 +47,13 @@ layoutsolo = Image.open(f"{pr_path}/images/LayoutSolo.png")
 layout54 = Image.open(f"{pr_path}/images/Layout54.png")
 layout80 = Image.open(f"{pr_path}/images/Layout80.png")
 police_pseudo = f"{pr_path}/images/agencyfb.ttf"
+police_top = f"{pr_path}/images/segoesc.ttf"
 save = f"{pr_path}/résultats/layoutPR.png"
 carre = Image.open(f"{pr_path}/images/carre.png")
 police_pseudo2 = f"{pr_path}/images/MusticaPro-SemiBold 600.otf"
 fontc = ImageFont.truetype(police_pseudo, size=28) #32
-
-
-
+cadrenom = Image.open(f"{pr_path}/images/CadreNom.png")
+cadrenom54 = Image.open(f"{pr_path}/images/CadreNom54.png")
 
 # Script
 
@@ -61,9 +62,11 @@ draw54 = ImageDraw.Draw(layout54)
 draw80 = ImageDraw.Draw(layout80)
 avatars = []
 fonta = ImageFont.truetype(police_pseudo, size=32)
+font_top = ImageFont.truetype(police_top, size=45)
 
 class Song:
-    def __init__(self, anime, song_type, info, link):
+    def __init__(self, picker, anime, song_type, info, link):
+        self.picker = picker
         self.anime = anime
         self.type = song_type
         self.info = info
@@ -106,6 +109,8 @@ def get_data_script(sheet, songs):
     print(titres)
 
     id_index = titres.index('ID')
+    if nomination : 
+        picker_index = titres.index('Picker')
     anime_index = titres.index('Anime Name')
     try :
         song_type_index = titres.index('Song Type')
@@ -121,11 +126,19 @@ def get_data_script(sheet, songs):
         if not row[anime_index].value:
             break
         if row[song_info_index].hyperlink:
-            song = Song(row[anime_index].value, row[song_type_index].value if song_type_index != -1 else ' ', row[song_info_index].value,
-                        row[song_info_index].hyperlink.target)
+            if nomination:
+                song = Song(row[picker_index].value, row[anime_index].value, row[song_type_index].value if song_type_index != -1 else ' ', row[song_info_index].value,
+                            row[song_info_index].hyperlink.target)
+            else:
+                song = Song(None, row[anime_index].value, row[song_type_index].value if song_type_index != -1 else ' ', row[song_info_index].value,
+                            row[song_info_index].hyperlink.target)
         else:
-            song = Song(row[anime_index].value, row[song_type_index].value if song_type_index != -1 else ' ', row[song_info_index].value,
-                        row[song_info_index].value)
+            if nomination:
+                song = Song(row[picker_index].value, row[anime_index].value, row[song_type_index].value if song_type_index != -1 else ' ', row[song_info_index].value,
+                            row[song_info_index].value)
+            else: 
+                song = Song(None, row[anime_index].value, row[song_type_index].value if song_type_index != -1 else ' ', row[song_info_index].value,
+                            row[song_info_index].hyperlink.target)
         songs[row[id_index].value] = song
 
     return num_songs
@@ -219,8 +232,13 @@ def make_order(order, pr):
             order.append(pseudo)
 
 
-def fill_values(sheet, order, song_list, final_sheet, scoring_pr):
-    row1 = ['Rank', 'Anime Name', 'Song Type', 'Song Info', 'Score']
+def fill_values(sheet, order, song_list, final_sheet, scoring_pr, top=None):
+    if nomination:
+        row1 = ['Rank', 'Picker', 'Anime Name', 'Song Type', 'Song Info', 'Score']
+    elif top:
+        row1 = ['Rank', 'Top', 'Anime Name', 'Song Type', 'Song Info', 'Score']
+    else:
+        row1 = ['Rank', 'Anime Name', 'Song Type', 'Song Info', 'Score']
     if scoring_pr:
         row1.append('Average')
     if not final_sheet:
@@ -240,16 +258,35 @@ def fill_values(sheet, order, song_list, final_sheet, scoring_pr):
     for i in range(len(song_list)):
         if not song_list[i].is_tied or final_sheet:
             sheet.cell(i + 2, 1, i + 1)
-        sheet.cell(i + 2, 2, song_list[i].anime)
-        sheet.cell(i + 2, 3, song_list[i].type)
-
-        link_cell = sheet.cell(i + 2, 4, song_list[i].info)
-        link_cell.hyperlink = song_list[i].link
-        link_cell.font = Font(color=link_color, underline='single')
-
-        sheet.cell(i + 2, 5, song_list[i].score)
-        if scoring_pr:
-            sheet.cell(i + 2, 6, float('{:.2f}'.format(song_list[i].score / len(order))))
+        if nomination:
+            sheet.cell(i + 2, 2, song_list[i].picker)
+            sheet.cell(i + 2, 3, song_list[i].anime)
+            sheet.cell(i + 2, 4, song_list[i].type)
+            link_cell = sheet.cell(i + 2, 5, song_list[i].info)
+            link_cell.hyperlink = song_list[i].link
+            link_cell.font = Font(color=link_color, underline='single')
+            sheet.cell(i + 2, 6, song_list[i].score)
+            if scoring_pr:
+                sheet.cell(i + 2, 7, float('{:.2f}'.format(song_list[i].score / len(order))))
+        elif top:
+            sheet.cell(i + 2, 2, top[i])
+            sheet.cell(i + 2, 3, song_list[i].anime)
+            sheet.cell(i + 2, 4, song_list[i].type)
+            link_cell = sheet.cell(i + 2, 5, song_list[i].info)
+            link_cell.hyperlink = song_list[i].link
+            link_cell.font = Font(color=link_color, underline='single')
+            sheet.cell(i + 2, 6, song_list[i].score)
+            if scoring_pr:
+                sheet.cell(i + 2, 7, float('{:.2f}'.format(song_list[i].score / len(order))))
+        else:
+            sheet.cell(i + 2, 2, song_list[i].anime)
+            sheet.cell(i + 2, 3, song_list[i].type)
+            link_cell = sheet.cell(i + 2, 4, song_list[i].info)
+            link_cell.hyperlink = song_list[i].link
+            link_cell.font = Font(color=link_color, underline='single')
+            sheet.cell(i + 2, 5, song_list[i].score)
+            if scoring_pr:
+                sheet.cell(i + 2, 6, float('{:.2f}'.format(song_list[i].score / len(order))))
 
         for j in range(len(order)):
             sheet.cell(i + 2, j + part1 + 1, song_list[i].scores[order[j]])
@@ -281,18 +318,23 @@ def color_sheet(sheet, song_list, order, scoring_pr):
                 cell.fill = white_background
         i += 1
 
+    if nomination:
+        first_rank_cell = 'G'
+    else:
+        first_rank_cell = 'F'
+
     for i in range(len(song_list)):
-        sheet.conditional_formatting.add(f'F{i + 2}:{letter(4 + len(order))}{i + 2}', CellIsRule(operator='=',
+        sheet.conditional_formatting.add(f'{first_rank_cell}{i + 2}:{letter(4 + len(order))}{i + 2}', CellIsRule(operator='=',
                                                                                                  formula=[
-                                                                                                     f'=MIN($F${i + 2}:${letter(4 + len(order))}${i + 2})'],
+                                                                                                     f'=MIN(${first_rank_cell}${i + 2}:${letter(4 + len(order))}${i + 2})'],
                                                                                                  fill=green_background if not scoring_pr else red_background))
-        sheet.conditional_formatting.add(f'F{i + 2}:{letter(4 + len(order))}{i + 2}', CellIsRule(operator='=',
+        sheet.conditional_formatting.add(f'{first_rank_cell}{i + 2}:{letter(4 + len(order))}{i + 2}', CellIsRule(operator='=',
                                                                                                  formula=[
-                                                                                                     f'=MAX($F${i + 2}:${letter(4 + len(order))}${i + 2})'],
+                                                                                                     f'=MAX(${first_rank_cell}${i + 2}:${letter(4 + len(order))}${i + 2})'],
                                                                                                  fill=red_background if not scoring_pr else green_background))
 
 
-def create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, outputpath, final_sheet=False):
+def create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, outputpath, final_sheet=False, top=None):
     os.chdir(outputpath)
     if not make_sheet:
         pyperclip.copy(to_clipboard + '```')
@@ -300,8 +342,10 @@ def create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, outputpat
 
     result = Workbook()
     sheet = result.active
-
-    fill_values(sheet, order, song_list, final_sheet, scoring_pr)
+    if top:
+        fill_values(sheet, order, song_list, final_sheet, scoring_pr, top)
+    else:
+        fill_values(sheet, order, song_list, final_sheet, scoring_pr)
     resize_columns(sheet, final_sheet)
     if final_sheet:
         color_sheet(sheet, song_list, order, scoring_pr)
@@ -346,9 +390,11 @@ def worryheart(people, from_json = False):
         
     print(people)
     if people == 1:
-        print(people)   
+        print(people)
              
     elif people <= 8:
+        if nomination:
+            layout.paste(cadrenom, mask = cadrenom)
         fontb = ImageFont.truetype(police_pseudo2, size=35) 
         avatars = fill_avatars(C, order, 152)
 
@@ -380,6 +426,8 @@ def worryheart(people, from_json = False):
             incr += 145
  
     elif 15 <= people <= 18:
+        if nomination:
+            layout.paste(cadrenom, mask = cadrenom)
         avatars = fill_avatars(C, order, 97)
 
         incr = 22
@@ -395,6 +443,8 @@ def worryheart(people, from_json = False):
             incr += 23+97
  
     elif 19 <= people <= 36:
+        if nomination:
+            layout.paste(cadrenom, mask = cadrenom)
         avatars = fill_avatars(C, order, 97)
 
         incr = 22
@@ -434,6 +484,8 @@ def worryheart(people, from_json = False):
             incrcar += 120
  
     elif 37 <= people <= 54:
+        if nomination:
+            layout54.paste(cadrenom54, mask = cadrenom54)
         avatars = fill_avatars(C, order, 97)
 
         incr = 22
@@ -492,6 +544,8 @@ def worryheart(people, from_json = False):
             incrcar += 120
 
     elif 55 <= people <= 60:
+        if nomination:
+            layout54.paste(cadrenom54, mask = cadrenom54)
         avatars = fill_avatars(C, order, 85)
 
         incr = 22 #22
@@ -550,6 +604,8 @@ def worryheart(people, from_json = False):
             incrcar += 108
             
     elif 61 <= people <= 72:
+        if nomination:
+            layout80.paste(cadrenom54, mask = cadrenom54)
         avatars = fill_avatars(C, order, 97)
 
 #1ere colonne
@@ -645,6 +701,8 @@ def worryheart(people, from_json = False):
             incrcar += 120 
 
     elif 73 <= people <= 80:
+        if nomination:
+            layout80.paste(cadrenom54, mask = cadrenom54)
         avatars = fill_avatars(C, order, 85)
         
 #1ere colonne
@@ -741,6 +799,63 @@ def worryheart(people, from_json = False):
     else:
         print("il n'existe pas de layout adapté")
         exit()
+
+    if top_pr and people <= 36:
+        try:
+            parties = pr.split(" de ") #pour avoir le nom 
+            nom = parties[-1]
+            print(nom)
+            ppts = 80
+            pp_top = Image.open(f'{image_path}/{nom}.png')
+            pp_top = pp_top.resize((ppts, ppts))
+        
+            text_width = draw.textlength(nom, font=font_top)
+            hash_x = 1500
+    
+            text_x = hash_x - text_width - 10  # 10 pixels d'espace entre le texte et le "#"
+            
+            margin = 20 # Marge autour du texte pour le fond noir
+            background_start_x = text_x - margin  
+            background_end_x = 1650  
+            draw.rectangle([background_start_x, 90, background_end_x, 170], fill="black")
+
+            icon_x = int(text_x - ppts - 20)  # 10 pixels d'espace entre l'icône et le texte
+            draw.text((text_x, 100), nom, fill="white", font=font_top)
+            draw.text((hash_x, 100), "#", fill="white", font=font_top)
+
+            layout.paste(pp_top, (icon_x,90))
+        except Exception as e:
+            print(e)
+            print("Demander à Comète !")
+    
+
+    elif top_pr and 36 < people <= 80:
+        try:
+            parties = pr.split(" de ") #pour avoir le nom 
+            nom = parties[-1]
+            print(nom)
+            ppts = 80 #taille de la pp
+            pp_top = Image.open(f'{image_path}/{nom}.png')
+            pp_top = pp_top.resize((ppts, ppts))
+        
+            text_width = draw.textlength(nom, font=font_top)
+            hash_x = 1373 #1500
+    
+            text_x = hash_x - text_width - 10  # 10 pixels d'espace entre le texte et le "#"
+            
+            margin = 20 # Marge autour du texte pour le fond noir
+            background_start_x = text_x - margin  
+            background_end_x = 1523  #1650
+            draw54.rectangle([background_start_x, 70, background_end_x, 150], fill="black") #90 170
+
+            icon_x = int(text_x - ppts - 20)  # 10 pixels d'espace entre l'icône et le texte
+            draw54.text((text_x, 80), nom, fill="white", font=font_top)#100
+            draw54.text((hash_x, 80), "#", fill="white", font=font_top)#100
+
+            layout54.paste(pp_top, (icon_x,70)) #90
+        except Exception as e:
+            print(e)
+            print("Demander à Comète !")
 
     if people == 1:
         layoutsolo.save(save)
@@ -970,59 +1085,77 @@ red = 'FF0000'
 red_background = PatternFill(patternType='solid', bgColor=Color(rgb=red))
 
 if __name__ == '__main__':
-    path_list = pr_paths(Path('.').glob('**/*.xlsx'), pr)
-    first = True
-    make_sheet = True
-    songs = {}
-    to_clipboard = '```\n'
-    LINE1 = []
+    if (top_pr and scoring_pr) or (top_pr and nomination):
+        print("JE FAIS PAS LES TOPS EN SCORING OU EN NOMI")
+    else:
+        path_list = pr_paths(Path('.').glob('**/*.xlsx'), pr)
+        first = True
+        make_sheet = True
+        songs = {}
+        to_clipboard = '```\n'
+        LINE1 = []
 
-    if not pr:
-        pr = pr_find()
+        if not pr:
+            pr = pr_find()
 
-    make_order(order, pr)
-    
-    if not verify_pfp(order):
-        exit("❌ Missing avatars")
-    
-    C = nb_columns(len(order))
-    for path in path_list:
-        wb = load_workbook(path)
-        ws = wb.active
-        sheet_name = str(path)
-        pseudo = re.search(regex, sheet_name).group(2)
+        make_order(order, pr)
+        
+        if not verify_pfp(order):
+            exit("❌ Missing avatars")
+        
+        C = nb_columns(len(order))
+        for path in path_list:
+            wb = load_workbook(path)
+            ws = wb.active
+            sheet_name = str(path)
+            pseudo = re.search(regex, sheet_name).group(2)
 
-        if first:
-            num_songs = get_data_script(ws, songs)
-            first = False
+            if first:
+                num_songs = get_data_script(ws, songs)
+                first = False
+
+            try:
+                rank_list = get_ranker_ranks(ws, num_songs, pseudo)
+                for song_id, rank, name in rank_list:
+                    songs[song_id].scores[name] = rank
+            except Exception as e:
+                message = f'⚠️ {pseudo} : {e}'
+                print(message)
+                to_clipboard += message + '\n'
+                make_sheet = False
+                
+        if top_pr:
+            song_list = list(songs.values())
+            dico = {}
+            for i in range(len(song_list)):
+                dico[song_list[i]] = i+1
+
+            song_list.sort()        
+
+            Top = []
+            for elem in song_list:
+                Top.append(dico[elem])
+            
+            print(Top)
+            
+            create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, results_path, top=Top)
+
+        else:
+            song_list = list(songs.values())
+            song_list.sort()
+
+            create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, results_path)
+
+        worryheart(len(order))
 
         try:
-            rank_list = get_ranker_ranks(ws, num_songs, pseudo)
-            for song_id, rank, name in rank_list:
-                songs[song_id].scores[name] = rank
+            base_path = os.getcwd()
+            Path(f'{pr} Stats et Sheet').mkdir(parents=True, exist_ok=True)
+            temp_path = os.path.join(base_path, f'{pr} Stats et Sheet')
+            os.chdir(temp_path)
+            create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, temp_path, final_sheet=True)
+            get_affinity(temp_path)
+            print("Affinité Faite")
         except Exception as e:
-            message = f'⚠️ {pseudo} : {e}'
-            print(message)
-            to_clipboard += message + '\n'
-            make_sheet = False
-            
-    song_list = list(songs.values())
-    song_list.sort()
-
-    create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, results_path )
-
-    worryheart(len(order))
-
-    try:
-        base_path = os.getcwd()
-        Path(f'{pr} Stats et Sheet').mkdir(parents=True, exist_ok=True)
-        temp_path = os.path.join(base_path, f'{pr} Stats et Sheet')
-        os.chdir(temp_path)
-        create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, temp_path, final_sheet=True)
-        get_affinity(temp_path)
-        print("Affinité Faite")
-    except Exception as e:
-        pass
-
-
-    
+            print(e)
+            pass

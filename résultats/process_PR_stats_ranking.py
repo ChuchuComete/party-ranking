@@ -10,12 +10,11 @@ import matplotlib.patheffects as PathEffects
 import json
 
 # -------- Mandatory settings --------
-
 # ranking or rating
 SCORING_METHOD = "ranking"
 
 # the column at which players scores start appearing (first column in the sheet = 1)
-START_COLUMN_PLAYER = 6
+START_COLUMN_PLAYER = 7
 
 # the line at which players names start appearing (first line in the sheet = 1)
 START_LINE_PLAYER = 1
