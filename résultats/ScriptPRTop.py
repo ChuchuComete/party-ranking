@@ -3,17 +3,26 @@ from PIL import Image, ImageDraw, ImageFont,ImageEnhance, ImageFilter,ImageOps
 import os
 import numpy as np
 import json
+import configparser
+
+VERSION = "1.0"
+print(f"ScriptPRNomi.py version {VERSION}")
+
+config = configparser.ConfigParser()
+config.read('../config.txt')
+pr_path = config["general"]["pr_path"]
 
 #Données (Ce qu'il y a à modifier):
 
-Chemin = 'C:/Users/adeli/Downloads/Party Rankings/Images'
+Chemin = f'{pr_path}/images'
 os.chdir(Chemin)
+
 
 Bro=PIL.Image.open('Bronze2.png')
 Arg=PIL.Image.open('Argent2.png')
 Or=PIL.Image.open('Or2.png')
 
-LayoutPR = "C:/Users/adeli/Downloads/party-ranking-main-rapide/party-ranking-main/résultats/LayoutPR.png"
+LayoutPR =  f"{pr_path}/résultats/layoutPR.png"
 
 #Polices
 

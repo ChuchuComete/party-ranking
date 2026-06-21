@@ -23,7 +23,7 @@ regex = r'\\(.*) [(](.*)[)]' if os.name == 'nt' else r'/(.*) \((.*)\)'
 pr = ''  # laisser vide si un seul pr dans le dossier
 scoring_pr = False
 nomination = False
-top_pr = False
+top_pr = True
 order = []  # laisser vide si ordre alphabétique
 C = []
 
