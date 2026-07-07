@@ -11,6 +11,7 @@ from pyexcel_ods3 import save_data
 from pyexcel_xlsx import get_data
 import os
 import configparser
+import argparse
 
 VERSION = "1.2.0"
 print(f"results.py version {VERSION}")
@@ -23,9 +24,27 @@ regex = r'\\(.*) [(](.*)[)]' if os.name == 'nt' else r'/(.*) \((.*)\)'
 pr = ''  # laisser vide si un seul pr dans le dossier
 scoring_pr = False
 nomination = False
-top_pr = True
+top_pr = False
 order = []  # laisser vide si ordre alphabétique
 C = []
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--scoring', help="Make results sheet for scoring PR", action='store_true')
+parser.add_argument('--nom', help="Make results sheet for nomination PR", action='store_true')
+parser.add_argument('--top', help="Make results sheet for top 30 PR", action='store_true')
+
+args = parser.parse_args()
+
+if args.scoring:
+    scoring_pr = True
+    print("Scoring PR")
+if args.nom:
+    nomination = True
+    print("Nomination PR")
+if args.top:
+    top_pr = True
+    print("Top PR")
+
 
 config = configparser.ConfigParser()
 config.read('../config.txt')
@@ -1148,14 +1167,14 @@ if __name__ == '__main__':
 
         worryheart(len(order))
 
-        try:
-            base_path = os.getcwd()
-            Path(f'{pr} Stats et Sheet').mkdir(parents=True, exist_ok=True)
-            temp_path = os.path.join(base_path, f'{pr} Stats et Sheet')
-            os.chdir(temp_path)
-            create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, temp_path, final_sheet=True)
-            get_affinity(temp_path)
-            print("Affinité Faite")
-        except Exception as e:
-            print(e)
-            pass
+        #try:
+            #base_path = os.getcwd()
+            #Path(f'{pr} Stats et Sheet').mkdir(parents=True, exist_ok=True)
+            #temp_path = os.path.join(base_path, f'{pr} Stats et Sheet')
+            #os.chdir(temp_path)
+            #create_results_sheet(pr, order, song_list, scoring_pr, make_sheet, temp_path, final_sheet=True)
+            #get_affinity(temp_path)
+            #print("Affinité Faite")
+        #except Exception as e:
+        #    print(e)
+        #    pass
