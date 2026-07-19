@@ -12,8 +12,6 @@ import requests
 import aiohttp
 import asyncio
 from yt_dlp import YoutubeDL
-
-from results import nomination, top_pr
 from new_video_editing import new_video_editing
 
 
@@ -43,6 +41,22 @@ for path in [pr_path, image_path, results_path]:
 if config_error:
     exit()
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--scoring', help="Make results sheet for scoring PR", action='store_true')
+parser.add_argument('--nom', help="Make results sheet for nomination PR", action='store_true')
+parser.add_argument('--top', help="Make results sheet for top 30 PR", action='store_true')
+
+args = parser.parse_args()
+
+if args.scoring:
+    scoring_pr = True
+    print("Scoring PR")
+if args.nom:
+    nomination = True
+    print("Nomination PR")
+if args.top:
+    top_pr = True
+    print("Top PR")
 
 class SampledSong(Song):
     def __init__(self, picker, top, anime, song_type, info, link, score, sample, sample_length, ranks, order):
